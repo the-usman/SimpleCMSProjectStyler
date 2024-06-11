@@ -1,0 +1,35 @@
+"use client"
+import React, { useRef, useState, } from 'react';
+import { BoundingBox } from 'framer-motion';
+import H1Component from './H1Component';
+
+interface element {
+  id?: string;
+  text?: string;
+}
+export default function Home() {
+  const [headings, setHeadings] = useState<element[]>([{}]);
+
+  const createHeading = (): void => {
+    const newHeading = {
+      id: `h1_${headings.length + 1}`,
+      text: 'Home',
+    };
+    setHeadings([...headings, newHeading]);
+  };
+
+  const canvasRef = useRef< React.RefObject<HTMLDivElement> >(null);
+
+
+
+  return (
+    <div className="home flex overflow-hidden">
+      <div className="siderbar bg-slate-300 w-[300px] h-[100vh]">
+        <button onClick={createHeading}>H1</button>
+      </div>
+      <div className="canvas" ref={canvasRef} style={{ overflow: 'hidden', width: '1000px' }}>
+        <H1Component headings={headings} canvasRef={canvasRef} />
+      </div>
+    </div>
+  );
+}
