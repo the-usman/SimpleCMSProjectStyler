@@ -3,15 +3,13 @@ import { motion } from 'framer-motion';
 import { element } from './types';
 import { AppContext } from '@/context/indext';
 
-type H1props = {
-    canvasRef: React.RefObject<HTMLDivElement>
-}
 
-const H1Component: FC<H1props> = ({ canvasRef }) => {
+
+const TextComponent = ({ canvasRef }: {canvasRef: React.RefObject<HTMLDivElement>}) => {
     const [isResizing, setIsResizing] = useState(false);
     const resizingRef = useRef<HTMLDivElement | null>(null);
     const context = useContext(AppContext);
-    const headings = context?.elements?.filter((elem) => elem.type === "heading")[0]?.elements;
+    const headings = context?.elements?.filter((elem) => elem.type === "text")[0]?.elements;
 
 
     const handleMouseDown = (e: React.MouseEvent) => {
@@ -67,15 +65,17 @@ const H1Component: FC<H1props> = ({ canvasRef }) => {
                         id={heading.id}
                         contentEditable="true"
                         style={{
-                            fontSize: '28px',
+                            fontSize: '18px',
                             padding: '10px',
                             border: '1px solid black',
                             outline: 'none',
                             display: 'block',
                             resize: 'both',
-                            minHeight: '30px',
-                            minWidth: '150px',
+                            minHeight: '20px',
+                            minWidth: '50px',
                             overflow: 'hidden',
+                            width: "350px",
+                            height: "200px",
                             borderRadius: '10px',
                             userSelect: isResizing ? 'none' : 'auto',
                             cursor: isResizing ? 'nwse-resize' : 'default',
@@ -103,4 +103,4 @@ const H1Component: FC<H1props> = ({ canvasRef }) => {
     );
 }
 
-export default H1Component;
+export default TextComponent;
