@@ -15,6 +15,10 @@ export interface Context {
     setState?: (state: string) => void;
     elements?: Elemento[];
     setElements?: (elements: Elemento[] | ((prevElements: Elemento[]) => Elemento[])) => void;
+    isDragging?: boolean;
+    setIsDragging: (isDragging: boolean) => void;
+    dragableComponent?: string;
+    setDargableComponent: (dragComponent: string) => void;
 }
 
 // const AppContext = createContext<AppContextType | undefined>(undefined);

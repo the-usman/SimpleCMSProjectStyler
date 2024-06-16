@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect, useContext, FC } from 'react';
-import { motion } from 'framer-motion';
 import { element } from './types';
 import { AppContext } from '@/context/indext';
+import DragComponent from './DragComponent';
+import Resizer from './Resizer';
 
 
 
@@ -59,10 +60,10 @@ const TextComponent = ({ canvasRef }: {canvasRef: React.RefObject<HTMLDivElement
     return (
         <div >
             {headings?.map((heading: element) => (
-                <div>
-                    <motion.h1
+                <Resizer>
+                    <h1
                         key={heading.id}
-                        id={heading.id}
+                        // id={heading.id}
                         contentEditable="true"
                         style={{
                             fontSize: '18px',
@@ -74,18 +75,15 @@ const TextComponent = ({ canvasRef }: {canvasRef: React.RefObject<HTMLDivElement
                             minHeight: '20px',
                             minWidth: '50px',
                             overflow: 'hidden',
-                            width: "350px",
-                            height: "200px",
+                            width: "100%",
+                            height: "100%",
                             borderRadius: '10px',
                             userSelect: isResizing ? 'none' : 'auto',
                             cursor: isResizing ? 'nwse-resize' : 'default',
-                            position: 'absolute',
+                            // position: 'inherit',
                             opacity: 0.5
                         }}
-                        drag={!isResizing}
-                        dragMomentum={false}
-                        dragConstraints={canvasRef}
-                        dragElastic={false}
+                        
                         onMouseDown={handleMouseDown}
                         onFocus={(e) => {
                             const elem1 = document.getElementById(heading.id as string);
@@ -96,8 +94,8 @@ const TextComponent = ({ canvasRef }: {canvasRef: React.RefObject<HTMLDivElement
                         }}
                     >
                         {heading.text}
-                    </motion.h1>
-                </div>
+                    </h1>
+                </Resizer>
             ))}
         </div>
     );
