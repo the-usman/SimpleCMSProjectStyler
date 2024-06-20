@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-[contenteditable] {
+/* [contenteditable] {
   outline: 0px solid transparent;
   border: 2px solid red ;
-}
+} */

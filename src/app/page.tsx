@@ -4,6 +4,8 @@ import H1Component from './H1Component';
 import { Elemento, element } from './types';
 import { AppWrapperProvider } from '@/context/indext';
 import TextComponent from './TextComponent';
+import Image from 'next/image';
+import Icon from './Icon';
 
 
 export default function Home() {
@@ -52,17 +54,19 @@ export default function Home() {
 
 
   const canvasRef = useRef<HTMLDivElement>(null);
-  const handle = () => {
-    updateElements({ type: "heading" });
+  const handle = (type: string) => {
+    updateElements({ type: type });
   }
   return (
     <div className="home flex overflow-hidden">
-      <div className="siderbar bg-slate-300 w-[300px] h-[100vh]">
-        <button onClick={handle}>H1</button>
-        <button onClick={() => updateElements({ type: "text" })}>Text</button>
-        
+      <div className="siderbar bg-slate-300 w-[25%] h-[100vh]">
+        <div className="icons flex justify-evenly items-center gap-2 p-2">
+          <Icon text='Heading' src='/heading.png' onClick={() => handle('heading')} ></Icon>
+          <Icon text='text' src='/text.png' onClick={() => handle('text')} ></Icon>
+          {/* <Icon text='Image' src='/text.png' ></Icon> */}
+        </div>
       </div>
-      <div className="canvas" ref={canvasRef} style={{ overflow: 'hidden !important', width: '1000px', height: 'auto'}}>
+      <div className="canvas" ref={canvasRef} style={{ overflow: 'hidden !important', width: '75%', height: 'auto', position: 'relative' }}>
         <H1Component canvasRef={canvasRef} />
         <TextComponent canvasRef={canvasRef} />
       </div>

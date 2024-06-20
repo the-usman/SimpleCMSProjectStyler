@@ -1,24 +1,31 @@
-
-
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 
 const DragComponent = ({ children, id }: { children: React.ReactNode, id: string }) => {
     const [isDragging, setIsDragging] = useState(false);
-    const [dragableComponent, setDargableComponent] = useState<string>("");
-    const onMouseDown = (e: any) => {
-        setDargableComponent(id);
-        setIsDragging(true);
-    }
+    const [startX, setStartX] = useState(0);
+    const [startY, setStartY] = useState(0);
+    const [offsetX, setOffsetX] = useState(0);
+    const [offsetY, setOffsetY] = useState(0);
+
+    const onMouseDown = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        const movingDiv = document.getElementById(id);
+        if (movingDiv) {
+            setIsDragging(true);
+            setStartX(e.clientX - movingDiv.offsetLeft);
+            setStartY(e.clientY - movingDiv.offsetTop);
+            setOffsetX(movingDiv.offsetLeft);
+            setOffsetY(movingDiv.offsetTop);
+        }
+    };
 
     useEffect(() => {
         const handleMove = (event: MouseEvent | TouchEvent) => {
-            
             if (isDragging) {
                 const movingDiv = document.getElementById(id);
-                console.log("moving div is ",id);
-                let clientX: number;
-                let clientY: number;
                 if (movingDiv) {
+                    let clientX: number;
+                    let clientY: number;
                     if (event instanceof MouseEvent) {
                         clientX = event.clientX;
                         clientY = event.clientY;
@@ -27,19 +34,11 @@ const DragComponent = ({ children, id }: { children: React.ReactNode, id: string
                         clientY = event.touches[0].clientY;
                     }
 
-                    const maxX = window.innerWidth - movingDiv.offsetWidth;
-                    const maxY = window.innerHeight - movingDiv.offsetHeight;
+                    const x = clientX - startX;
+                    const y = clientY - startY;
 
-                    const x = Math.min(Math.max(0, clientX), maxX);
-                    const y = Math.min(Math.max(0, clientY), maxY);
-                    if (x > 300) {
-                        movingDiv.style.left = x + 'px';
-                        movingDiv.style.top = y + 'px';
-                    }
-                    else if (x < 300) {
-                        movingDiv.style.left = 300 + 'px';
-                        movingDiv.style.top = y + 'px';
-                    }
+                    movingDiv.style.left = `${x}px`;
+                    movingDiv.style.top = `${y}px`;
                 }
             }
         };
@@ -65,18 +64,20 @@ const DragComponent = ({ children, id }: { children: React.ReactNode, id: string
             document.removeEventListener('touchmove', handleMove);
             document.removeEventListener('touchend', handleEnd);
         };
-    }, [isDragging]);
+    }, [isDragging, startX, startY]);
 
+    
 
     return (
         <div
             id={id}
-            onMouseDown={(e) => onMouseDown(e)} style={{ position: 'absolute' }}>
-            <div style={ {width: "400px", position: 'relative'}}><span className='cursor-pointer p-2 select-none absolute left-[-2%] -top-[55%]'>"</span>
-                {children}
-            </div>
+            onMouseDown={(e) => onMouseDown(e)}
+            style={{ position: 'absolute', left: offsetX, top: offsetY }}
+        >
+            dd
+            {children}
         </div>
-    )
-}
+    );
+};
 
-export default DragComponent
+export default DragComponent;
