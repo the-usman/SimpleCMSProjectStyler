@@ -12,21 +12,38 @@ const H1Component: FC<H1props> = ({ canvasRef }) => {
     const context = useContext(AppContext);
     const headings = context?.elements?.filter((elem) => elem.type === "heading")[0]?.elements;
 
+    const onClick = (id: string) => {
+        if (context?.setState) {
+            context?.setState(id);
+            console.log(context);
+        }
+        
+    }
+
 
 
     return (
         <div >
             {headings?.map((heading: element) => (
-                <DraggableResizableComponent id={heading.id as string} conRef={canvasRef}>
+                <DraggableResizableComponent id={heading.id as string} conRef={canvasRef}
+                    onClick={() => onClick(heading.id as string)}
+                >
                     <h1
                         key={heading.id}
                         id={heading.id}
                         contentEditable="true"
                         style={{
-                            fontSize: '28px',
-                            padding: '10px',
-                            height:'100%',
-                            opacity: 0.5
+                            // fontSize: '28px',
+                            
+                            outline: 'none',
+                            display: 'block',
+                            overflow: 'auto',
+                            width: "100%",
+                            height: "100%",
+                            borderRadius: '10px',
+                            msUserSelect: 'none',
+                            opacity: 1,
+                            position: 'relative'
                         }}
 
                         onFocus={(e) => {

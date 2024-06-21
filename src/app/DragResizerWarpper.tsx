@@ -5,7 +5,7 @@ type Sizer = {
     clientY: number
 };
 
-const DraggableResizableComponent = ({ children, id, conRef }: { children: React.ReactNode, id: string, conRef?: any }) => {
+const DraggableResizableComponent = ({ children, id, conRef, onClick }: { children: React.ReactNode, id: string, conRef?: any, onClick?: VoidFunction }) => {
     const ref = useRef<HTMLDivElement>(null);
     const topRef = useRef<HTMLDivElement>(null);
     const leftRef = useRef<HTMLDivElement>(null);
@@ -15,6 +15,7 @@ const DraggableResizableComponent = ({ children, id, conRef }: { children: React
     const topRightRef = useRef<HTMLDivElement>(null);
     const bottomLeftRef = useRef<HTMLDivElement>(null);
     const bottomRightRef = useRef<HTMLDivElement>(null);
+    const childRef = useRef<HTMLDivElement>(null);
 
     const [isDragging, setIsDragging] = useState(false);
     const [isResizing, setIsResizing] = useState(false);
@@ -413,7 +414,16 @@ const DraggableResizableComponent = ({ children, id, conRef }: { children: React
 
         const handleClick = (e: MouseEvent) => {
             setIsActive(true);
+            
             e.stopPropagation();
+            if (onClick) {
+                if (childRef.current) {
+                    childRef.current.addEventListener("click", (e) => {
+                        onClick();
+                        
+                    })
+                }
+            }
         };
 
         resizeableEle.addEventListener('click', handleClick);
@@ -435,16 +445,31 @@ const DraggableResizableComponent = ({ children, id, conRef }: { children: React
         };
     }, []);
 
+    useEffect(() => {
+        if (onClick) {
+            if (childRef.current) {
+                childRef.current.addEventListener("click", (e) => {
+                    onClick();
+                    // e.stopPropagation();
+                })
+            }
+        }
+    },  [])
+
     return (
         <div
             ref={ref}
             id={id}
+            // onClick={()=> onClick && onClick()}
             onMouseDown={(e) => onMouseDownDrag(e)}
-            style={{ position: 'absolute', left: offsetX, top: offsetY, boxSizing: 'border-box' }}
+            style={{ position: 'absolute', left: offsetX, top: offsetY, boxSizing: 'border-box', padding: '10px' }}
             className={`mainDivResizer ${isActive ? 'border border-black' : 'border-none'}`}
         >
             <span style={{ position: 'absolute', zIndex: -1, color: 'transparent' }}>usman</span>
-            {children}
+            <div  ref={childRef} className='overflow-hidden'>
+
+            {children}     
+            </div>
             
             <div ref={topLeftRef} className={`topLeftRef absolute ${isActive && ('h-[40px] w-[40px]')} cursor-nw-resize`} style={{ top: '-40px', left: '-40px', borderLeft: '1px solid black', borderTop: '1px solid black', borderStyle:'dashed' }}></div>
             <div ref={topRightRef} className={`topRightRef absolute ${isActive && ('h-[40px] w-[40px]')} cursor-ne-resize`} style={{ top: '-40px', right: '-40px', borderRight: '1px solid black', borderTop: '1px solid black', borderStyle:'dashed' }}></div>

@@ -7,7 +7,7 @@ import { Context } from "@/app/types";
 export const AppContext = createContext<Context | undefined>(undefined);
 
 export const AppWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [state, setState] = useState<string>();
+    const [state, setState] = useState<string>('');
     const [elements, setElements] = useState<Elemento[]>([]);
     const [dragableComponent, setDargableComponent] = useState<string>("");
     const [isDragging, setIsDragging] = useState<boolean>(false);

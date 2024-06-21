@@ -11,20 +11,18 @@ const TextComponent = ({ canvasRef }: { canvasRef: React.RefObject<HTMLDivElemen
     <div>
       {headings?.map((heading: element) => (
         <DraggableResizableComponent key={heading.id} id={heading.id as string} conRef={canvasRef}>
-          <h1
+          <p
             contentEditable="true"
             style={{
               fontSize: '18px',
               padding: '10px',
               outline: 'none',
-              display: 'block',
+              // display: 'block',
               overflow: 'auto',
               width: "100%",
               height: "100%",
-              borderRadius: '10px',
-              msUserSelect: 'none',
               opacity: 1,
-              position: 'relative'
+              // position: 'relative'
             }}
             onFocus={(e) => {
               const elem1 = document.getElementById(heading.id as string);
@@ -35,7 +33,7 @@ const TextComponent = ({ canvasRef }: { canvasRef: React.RefObject<HTMLDivElemen
             }}
           >
             {heading.text}
-          </h1>
+          </p>
         </DraggableResizableComponent>
       ))}
     </div>
