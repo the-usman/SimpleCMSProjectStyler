@@ -18,11 +18,11 @@ const FontSize = () => {
 
     useEffect(() => {
         onChangeFont();
-    }, [fontSize, unit]); // Call onChangeFont whenever fontSize or unit changes
+    }, [fontSize, unit]);
 
     return (
         <div>
-            <div className='font-size flex justify-evenly w-[100%]'>
+            <div className='font-size flex justify-between w-[100%]'>
                 <div className="styleLabel m-2 font-bold">
                     Font Size
                 </div>

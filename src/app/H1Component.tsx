@@ -17,7 +17,7 @@ const H1Component: FC<H1props> = ({ canvasRef }) => {
             context?.setState(id);
             console.log(context);
         }
-        
+
     }
 
 
@@ -30,20 +30,17 @@ const H1Component: FC<H1props> = ({ canvasRef }) => {
                 >
                     <h1
                         key={heading.id}
-                        id={heading.id}
+                        // id={heading.id}
                         contentEditable="true"
                         style={{
-                            // fontSize: '28px',
-                            
+                            // fontSize: '18px',
+                            // padding: '10px',
                             outline: 'none',
-                            display: 'block',
+                            // display: 'block',
                             overflow: 'auto',
                             width: "100%",
                             height: "100%",
-                            borderRadius: '10px',
-                            msUserSelect: 'none',
                             opacity: 1,
-                            position: 'relative'
                         }}
 
                         onFocus={(e) => {

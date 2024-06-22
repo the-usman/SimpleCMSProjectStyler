@@ -3,6 +3,26 @@ import { Elemento, element } from './types';
 import { AppWrapperProvider } from '@/context/indext';
 import Icon from './Icon';
 import FontSize from './Fonts/FontSize';
+import FontWeight from './Fonts/fontWeight';
+import Color from './Fonts/Color';
+import FontFamily from './Fonts/FontFamily';
+import TextDecoration from './Fonts/TextDecoration';
+import BgColor from './Dimension/BGColor';
+import BackgroundImage from './Dimension/BackgroundImage';
+import Height from './Dimension/Height';
+import Opacity from './Dimension/Opacity';
+import Padding from './Dimension/Padding';
+import Width from './Dimension/Width';
+import BorderColor from './Border/BorderColor';
+import BorderRadius from './Border/BorderRadius';
+import AnimatedBorder from './Border/AnimatedBorder';
+import BorderStyle from './Border/BorderStyle';
+import BorderType from './Border/BorderType';
+import BorderWidth from './Border/BorderWidth';
+import Animation from './Animations/Animation';
+import BackgroundAttachment from './Dimension/BackgroundAttachment';
+import BackgroundPosition from './Dimension/BackgroundPosition';
+import BackgroundSize from './Dimension/BackgroundSize';
 
 
 const Panel = () => {
@@ -101,6 +121,29 @@ const Panel = () => {
                     <div className='w-[100%]' >
                         <div className='w-[100%]' >
                             <FontSize />
+                            <FontWeight />
+                            <Color />
+                            <FontFamily />
+                            <TextDecoration />
+                            <br /><br />
+                            <BgColor />
+                            <BackgroundImage />
+                            <Height />
+                            <Opacity />
+                            <Padding />
+                            <Width />
+                            <BackgroundAttachment />
+                            <BackgroundPosition />
+                            <BackgroundSize />
+                            <br /><br />
+                            <BorderColor />
+                            <BorderRadius />
+                            <AnimatedBorder />
+                            <BorderStyle />
+                            <BorderType />
+                            <BorderWidth />
+                            <br /><br />
+                            <Animation />
                         </div>
                     </div>
                 </div>

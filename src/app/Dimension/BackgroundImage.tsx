@@ -1,35 +1,36 @@
 import { AppContext } from '@/context/indext';
 import React, { useContext, useState, useEffect } from 'react';
 
-const BorderType = () => {
+const BackgroundImage = () => {
     const context = useContext(AppContext);
-    const [borderType, setBorderType] = useState('');
+    const [bgImage, setBgImage] = useState('');
 
-    const onChangeBorderType = () => {
+    const onChangeBgImage = () => {
         if (!context?.state) return;
 
         const elem = document.getElementById(context.state);
         if (!elem) return;
-        elem.style.border = borderType;
+        elem.style.backgroundImage = `url(${bgImage})`;
     };
 
     useEffect(() => {
-        onChangeBorderType();
-    }, [borderType]);
+        onChangeBgImage();
+    }, [bgImage]);
 
     return (
         <div>
-            <div className='border-type flex justify-between w-[100%]'>
+            <div className='background-image flex justify-between w-[100%]'>
                 <div className="styleLabel m-2 font-bold">
-                    Border Type
+                    Background Image
                 </div>
                 <div>
                     <input
                         type="text"
-                        name="border-type"
+                        name="background-image"
                         className='w-[200px] p-2'
-                        value={borderType}
-                        onChange={(e) => setBorderType(e.target.value)}
+                        placeholder="Enter image URL"
+                        value={bgImage}
+                        onChange={(e) => setBgImage(e.target.value)}
                     />
                 </div>
             </div>
@@ -37,4 +38,4 @@ const BorderType = () => {
     );
 };
 
-export default BorderType;
+export default BackgroundImage;
