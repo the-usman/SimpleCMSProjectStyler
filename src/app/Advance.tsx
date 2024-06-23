@@ -1,12 +1,16 @@
 
 import { AppWrapperProvider } from '@/context/indext';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+type classElem = {
+    elem?: string,
+    styles?: string,
+}
 
 const Advance = () => {
     const [styles, setStyles] = useState(``);
     const context = AppWrapperProvider();
 
-    if (!context) 
+    if (!context)
         throw new Error('No context provided');
     const { state } = context;
 
@@ -15,14 +19,27 @@ const Advance = () => {
         setStyles(e.target.innerText);
     }
     const AddUpdateStyles = (element: string, stylesFull: string, styles: string): string => {
-        styles.split("}")[0];
-        const pattern = new RegExp(`${element}\\s*{[^}]*}\\s*/\\*END\\*/`, 'gi');
-        const cleanedStylesFull = stylesFull.replace(pattern, '').trim();
-        const newStyles = `${element}  ${styles} `;
-        return `${cleanedStylesFull}\n${newStyles}`;
+        let returnStyles = stylesFull;
+        const styleBlocks = styles.split('}').slice(0, -1); 
+        styleBlocks.forEach((block) => {
+            const trimmedBlock = block.trim();
+            if (trimmedBlock) {
+                const [selectorPart, stylePart] = trimmedBlock.split('{');
+                const selector = selectorPart.trim();
+                const styleContent = stylePart.trim();
+                const fullSelector = `${element}${selector}`;
+                
+                const pattern = new RegExp(`${fullSelector}\\s*{[^}]*}\\s*`, 'gi');
+                
+                returnStyles = returnStyles.replace(pattern, '').trim();
+                
+                const newStyles = `${fullSelector} { ${styleContent} } `;
+                returnStyles = `${returnStyles}\n${newStyles}`;
+            }
+        });
+        return returnStyles;
     };
-    
-    
+
     const styleContent = () => {
         if (!state) {
             alert("No element Selected")
@@ -34,24 +51,24 @@ const Advance = () => {
             document.head.appendChild(styleElement);
         }
         console.log("Style Element:  ", styleElement)
-        console.log("style is ",cssStyle);
+        console.log("style is ", cssStyle);
         let styleContent = styleElement.innerHTML;
         styleContent = AddUpdateStyles(`.mainDivResizer_${state}`, styleContent, cssStyle);
 
         styleElement.innerHTML = styleContent;
     }
-    
 
-    
+
+
     return (
         <div>
             <div id='Advance' className='flex flex-col'>
-                
-                <div contentEditable={true} className='h-[300px]'
+
+                <div contentEditable={true} className='h-[300px] overflow-auto'
                     id='css'
                 >
-                    
-                    
+
+
                 </div>
                 <button onClick={styleContent}>Style NOW</button>
                 <div onClick={() => {

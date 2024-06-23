@@ -458,6 +458,7 @@ const DraggableResizableComponent = ({ children, id, conRef, onClick }: { childr
 
     return (
         <div
+        tabIndex={100}
             ref={ref}
             id={id}
             onMouseDown={(e) => onMouseDownDrag(e)}
