@@ -27,9 +27,9 @@ const H1Component: FC<H1props> = ({ canvasRef }) => {
             {headings?.map((heading: element) => (
                 <DraggableResizableComponent id={heading.id as string} conRef={canvasRef}
                     onClick={() => onClick(heading.id as string)}
+                    key={heading.id}
                 >
                     <h1
-                        key={heading.id}
                         // id={heading.id}
                         contentEditable="true"
                         style={{

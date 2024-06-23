@@ -19,6 +19,8 @@ export interface Context {
     setIsDragging: (isDragging: boolean) => void;
     dragableComponent?: string;
     setDargableComponent: (dragComponent: string) => void;
+    images?: { [key: string]: string };
+    setImages?: (elements: { [key: string]: string } | ((prevImages: { [key: string]: string})=> { [key: string]: string } )) => void;
 }
 
 // const AppContext = createContext<AppContextType | undefined>(undefined);

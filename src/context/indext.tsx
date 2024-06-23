@@ -11,6 +11,7 @@ export const AppWrapper: React.FC<{ children: React.ReactNode }> = ({ children }
     const [elements, setElements] = useState<Elemento[]>([]);
     const [dragableComponent, setDargableComponent] = useState<string>("");
     const [isDragging, setIsDragging] = useState<boolean>(false);
+    const [images, setImages] = useState<{ [key: string]: string }>({});
 
     const value: Context = {
         state,
@@ -19,7 +20,9 @@ export const AppWrapper: React.FC<{ children: React.ReactNode }> = ({ children }
         setElements,
         isDragging,
         setIsDragging,
-        dragableComponent, setDargableComponent
+        dragableComponent, setDargableComponent,
+        images,
+        setImages
     };
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

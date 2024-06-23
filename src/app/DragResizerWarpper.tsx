@@ -462,7 +462,7 @@ const DraggableResizableComponent = ({ children, id, conRef, onClick }: { childr
             id={id}
             onMouseDown={(e) => onMouseDownDrag(e)}
             style={{ position: 'absolute', left: offsetX, top: offsetY, boxSizing: 'border-box', padding: '10px' }}
-            className={`mainDivResizer ${isActive ? 'border border-black' : 'border-none'}`}
+            className={`mainDivResizer mainDivResizer_${id} ${isActive ? 'border border-black' : 'border-none'}`}
         >
             <span style={{ position: 'absolute', zIndex: -1, color: 'transparent' }}>usman</span>
             <div  ref={childRef} className='overflow-hidden w-[100%] h-[100%]'>

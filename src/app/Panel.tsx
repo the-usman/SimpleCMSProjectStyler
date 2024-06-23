@@ -1,32 +1,14 @@
-import React, { useEffect, useRef, useState, } from 'react';
+import React, { useContext, useEffect, useRef, useState, } from 'react';
 import { Elemento, element } from './types';
-import { AppWrapperProvider } from '@/context/indext';
+import { AppContext } from '@/context/indext';
 import Icon from './Icon';
-import FontSize from './Fonts/FontSize';
-import FontWeight from './Fonts/fontWeight';
-import Color from './Fonts/Color';
-import FontFamily from './Fonts/FontFamily';
-import TextDecoration from './Fonts/TextDecoration';
-import BgColor from './Dimension/BGColor';
-import BackgroundImage from './Dimension/BackgroundImage';
-import Height from './Dimension/Height';
-import Opacity from './Dimension/Opacity';
-import Padding from './Dimension/Padding';
-import Width from './Dimension/Width';
-import BorderColor from './Border/BorderColor';
-import BorderRadius from './Border/BorderRadius';
-import AnimatedBorder from './Border/AnimatedBorder';
-import BorderStyle from './Border/BorderStyle';
-import BorderType from './Border/BorderType';
-import BorderWidth from './Border/BorderWidth';
-import Animation from './Animations/Animation';
-import BackgroundAttachment from './Dimension/BackgroundAttachment';
-import BackgroundPosition from './Dimension/BackgroundPosition';
-import BackgroundSize from './Dimension/BackgroundSize';
+import Styler from './Styler';
+import Advance from './Advance';
 
 
 const Panel = () => {
-    const context = AppWrapperProvider();
+    const context = useContext(AppContext);
+    
     if (!context) {
         throw new Error('AppContext must be used within an AppProvider');
     }
@@ -35,7 +17,12 @@ const Panel = () => {
         text?: string;
     }
 
-    const { setElements, elements, state } = context;
+
+
+
+
+    const { setElements, elements, state, images, setImages } = context;
+
     const updateElements = ({ type, text }: Arg): void => {
         if (setElements && elements) {
             let flag = true;
@@ -73,7 +60,9 @@ const Panel = () => {
         updateElements({ type: type });
     }
 
-    const tabs = ['Components', 'Styling'];
+
+
+    const tabs = ['Components', 'Styling', 'Advance'];
     const [activeTab, setActiveTab] = useState(tabs[0]);
     useEffect(() => {
         tabs.forEach(element => {
@@ -89,14 +78,14 @@ const Panel = () => {
 
     }, [activeTab]);
 
-    const stylerTypes = [{
-        text: ['width', 'height', 'color', 'bg-color', 'padding', 'border*', 'font*'],
-        heading: []
-    }]
+    
+
+
+    
 
 
     return (
-        <div className='w-[30%]'>
+        <div className='w-[30%]' >
             <div className="siderbar bg-slate-300 w-[100%] h-[100vh] flex flex-col justify-between overflow-auto">
 
                 <div className="tabs flex">
@@ -110,44 +99,18 @@ const Panel = () => {
 
                 </div>
 
-                <div className='text-center text-3xl font-bold my-20'>Welcome to {activeTab}</div>
+                {/* <div className='text-center text-3xl font-bold my-20'>Welcome to {activeTab}</div> */}
                 <div className="icons flex justify-evenly items-center gap-2 p-2 flex-wrap" id='Components'>
                     <Icon text='Heading' src='/heading.png' onClick={() => handle('heading')} ></Icon>
                     <Icon text='text' src='/text.png' onClick={() => handle('text')} ></Icon>
                     <Icon text='Image' src='/image.png' onClick={() => handle('image')} ></Icon>
                     <Icon text='Videos' src='/video.png' onClick={() => handle('video')} ></Icon>
                 </div>
-                <div id="Styling" className='w-[100%]' >
-                    <div className='w-[100%]' >
-                        <div className='w-[100%]' >
-                            <FontSize />
-                            <FontWeight />
-                            <Color />
-                            <FontFamily />
-                            <TextDecoration />
-                            <br /><br />
-                            <BgColor />
-                            <BackgroundImage />
-                            <Height />
-                            <Opacity />
-                            <Padding />
-                            <Width />
-                            <BackgroundAttachment />
-                            <BackgroundPosition />
-                            <BackgroundSize />
-                            <br /><br />
-                            <BorderColor />
-                            <BorderRadius />
-                            <AnimatedBorder />
-                            <BorderStyle />
-                            <BorderType />
-                            <BorderWidth />
-                            <br /><br />
-                            <Animation />
-                        </div>
-                    </div>
-                </div>
+                        {activeTab === 'Styling' && <Styler/>}
+                    
+                <Advance />
 
+                
             </div>
         </div>
     )
