@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState, } from 'react';
 import { Elemento, element } from './types';
-import { AppContext } from '@/context/indext';
+import { AppContext } from '@/context';
 import Icon from './Icon';
 import Styler from './Styler';
 import Advance from './Advance';

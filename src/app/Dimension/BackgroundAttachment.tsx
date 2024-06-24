@@ -1,11 +1,22 @@
-
-import { AppContext } from '@/context/indext';
-import React, { useContext } from 'react';
+// import { AppContext } from '@/context/index';
+import { AppContext } from '@/context';
+import React, { useContext, useEffect, useState } from 'react';
 
 const BackgroundAttachment = () => {
     const context = useContext(AppContext);
+    const [defaultAttachment, setDefaultAttachment] = useState('');
 
-    const handleBackgroundAttachmentChange = (attachment: any) => {
+    useEffect(() => {
+        if (context?.state) {
+            const elem = document.getElementById(context.state);
+            if (elem) {
+                const currentAttachment = getComputedStyle(elem).backgroundAttachment;
+                setDefaultAttachment(currentAttachment);
+            }
+        }
+    }, [context?.state]);
+
+    const handleBackgroundAttachmentChange = (attachment: string) => {
         if (context?.state) {
             const elem = document.getElementById(context.state);
             if (!elem) return;
@@ -18,11 +29,15 @@ const BackgroundAttachment = () => {
             <div className="styleLabel m-2 font-bold">
                 Background Attachment
             </div>
-            <select name="backgroundAttachment" id="backgroundAttachment"
+            <select
+                name="backgroundAttachment"
+                id="backgroundAttachment"
+                value={defaultAttachment}
                 onChange={(e) => {
                     const value = e.target.value;
                     if (value) {
                         handleBackgroundAttachmentChange(value);
+                        setDefaultAttachment(value); 
                     }
                 }}
             >
@@ -32,7 +47,7 @@ const BackgroundAttachment = () => {
                 <option value="local">Local</option>
             </select>
         </div>
-    )
+    );
 }
 
-export default BackgroundAttachment;
+export default BackgroundAttachment

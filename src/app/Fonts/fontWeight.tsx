@@ -1,26 +1,40 @@
-import { AppContext } from '@/context/indext'
-import React, { useContext } from 'react'
+import { AppContext } from '@/context/index';
+import React, { useContext, useEffect, useState } from 'react';
 
 const FontWeight = () => {
     const context = useContext(AppContext);
-    
+    const [currentFontWeight, setCurrentFontWeight] = useState('400');
+
+    useEffect(() => {
+        if (context?.state) {
+            const elem = document.getElementById(context.state);
+            if (elem) {
+                const fontWeight = getComputedStyle(elem).fontWeight;
+                setCurrentFontWeight(fontWeight);
+            }
+        }
+    }, [context?.state]);
+
     return (
         <div className='font-size flex justify-between w-[100%] mt-3'>
             <div className="styleLabel m-2 font-bold">
-                    Font Weight
-                </div>
-            <select name="fontWeight" id=""
+                Font Weight
+            </div>
+            <select
+                name="fontWeight"
+                id=""
+                value={currentFontWeight}
                 onChange={(e) => {
                     const value = e.target.value;
                     if (value) {
                         if (context?.state) {
-                            const elem = document.getElementById(context.state) 
+                            const elem = document.getElementById(context.state);
                             if (!elem) return;
                             elem.style.fontWeight = value;
+                            setCurrentFontWeight(value);
                         }
                     }
                 }}
-            
             >
                 <option value="100">100</option>
                 <option value="200">200</option>
@@ -33,6 +47,7 @@ const FontWeight = () => {
                 <option value="900">900</option>
             </select>
         </div>
-    )
-}
+    );
+};
+
 export default FontWeight;

@@ -1,10 +1,10 @@
-import { AppContext } from '@/context/indext';
+import { AppContext } from '@/context';
 import React, { useContext, useState, useEffect } from 'react';
 
 const Height = () => {
     const context = useContext(AppContext);
-    const [unit, setUnit] = useState('px');
-    const [height, setHeight] = useState('');
+    const [unit, setUnit] = useState<string>('px');
+    const [height, setHeight] = useState<string>('100');
 
     const onChangeHeight = () => {
         if (!context?.state) return;

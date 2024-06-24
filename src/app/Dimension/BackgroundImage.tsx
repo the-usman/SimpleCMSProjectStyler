@@ -1,4 +1,4 @@
-import { AppContext } from '@/context/indext';
+import { AppContext } from '@/context';
 import React, { useContext, useState, useEffect } from 'react';
 
 const BackgroundImage = () => {

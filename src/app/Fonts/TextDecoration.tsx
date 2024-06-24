@@ -1,9 +1,19 @@
-import { AppContext } from '@/context/indext';
+import { AppContext } from '@/context/index';
 import React, { useContext, useState, useEffect } from 'react';
 
 const TextDecoration = () => {
     const context = useContext(AppContext);
     const [textDecoration, setTextDecoration] = useState('');
+
+    useEffect(() => {
+        if (context?.state) {
+            const elem = document.getElementById(context.state);
+            if (elem) {
+                const currentDecoration = getComputedStyle(elem).textDecoration;
+                setTextDecoration(currentDecoration);
+            }
+        }
+    }, [context?.state]);
 
     const onChangeTextDecoration = () => {
         if (!context?.state) return;

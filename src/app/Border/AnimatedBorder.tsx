@@ -1,14 +1,15 @@
-
-import { AppContext } from '@/context/indext';
-import React, { useContext } from 'react';
+import { AppContext } from '@/context';
+import React, { useContext, useState, useEffect } from 'react';
 
 const BorderAnimation = () => {
     const context = useContext(AppContext);
+    const [animation, setAnimation] = useState<string>('');
 
-    const handleBorderAnimationChange = (animation: any) => {
+    const handleBorderAnimationChange = (animation: string) => {
         if (context?.state) {
             const elem = document.getElementById(context.state);
             if (!elem) return;
+
             const animationClasses = [
                 'border-expand', 'border-shrink', 'border-pulsate', 'border-rotate', 'border-flash', 'border-dash', 'border-gradient', 'border-glow', 'border-wave',
                 'border-slide', 'border-bounce', 'border-fade', 'border-spread', 'border-flicker', 'border-ripple'
@@ -21,18 +22,20 @@ const BorderAnimation = () => {
         }
     };
 
+    useEffect(() => {
+        handleBorderAnimationChange(animation);
+    }, [animation]);
+
     return (
         <div className='border-animation flex justify-between w-[100%] mt-3'>
             <div className="styleLabel m-2 font-bold">
                 Border Animation
             </div>
-            <select name="borderAnimation" id="borderAnimation"
-                onChange={(e) => {
-                    const value = e.target.value;
-                    if (value) {
-                        handleBorderAnimationChange(value);
-                    }
-                }}
+            <select
+                name="borderAnimation"
+                id="borderAnimation"
+                value={animation}
+                onChange={(e) => setAnimation(e.target.value)}
             >
                 <option value="">Select Animation</option>
                 <option value="border-expand">Border Expand</option>
@@ -52,7 +55,7 @@ const BorderAnimation = () => {
                 <option value="border-ripple">Border Ripple</option>
             </select>
         </div>
-    )
+    );
 }
 
 export default BorderAnimation;

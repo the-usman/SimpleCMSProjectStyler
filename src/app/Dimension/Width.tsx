@@ -1,10 +1,10 @@
-import { AppContext } from '@/context/indext';
+import { AppContext } from '@/context';
 import React, { useContext, useState, useEffect } from 'react';
 
 const Width = () => {
     const context = useContext(AppContext);
-    const [unit, setUnit] = useState('px');
-    const [width, setWidth] = useState('');
+    const [unit, setUnit] = useState<string>('px');
+    const [width, setWidth] = useState<string>('100');
 
     const onChangeWidth = () => {
         if (!context?.state) return;

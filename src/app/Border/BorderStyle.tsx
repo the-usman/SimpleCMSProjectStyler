@@ -1,9 +1,9 @@
-import { AppContext } from '@/context/indext';
+import { AppContext } from '@/context';
 import React, { useContext, useState, useEffect } from 'react';
 
 const BorderStyle = () => {
     const context = useContext(AppContext);
-    const [borderStyle, setBorderStyle] = useState('');
+    const [borderStyle, setBorderStyle] = useState('none'); // default to 'none'
 
     const onChangeBorderStyle = () => {
         if (!context?.state) return;

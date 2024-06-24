@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { element } from './types';
-import { AppContext } from '@/context/indext';
+import { AppContext } from '@/context';
 import DraggableResizableComponent from './DragResizerWarpper';
 import { connect } from 'tls';
 
@@ -46,7 +46,10 @@ const ImageComponent = ({ canvasRef }: { canvasRef: React.RefObject<HTMLDivEleme
     return (
         <div>
             {headings?.map((heading: element) => (
-                <DraggableResizableComponent key={heading.id} id={heading.id as string} conRef={canvasRef} onClick={() => onClick(heading.id as string)}>
+                <div key={heading.id}>
+                <DraggableResizableComponent key={heading.id} id={heading.id as string} conRef={canvasRef} onClick={() => onClick(heading.id as string)}
+                    
+                >
                     <div style={{width: '100%', height:'100%'}}>
                     <img
                         src={context?.images && (context?.images[heading.id as string] )|| 'https://img.icons8.com/?size=100&id=68826&format=png&color=000000'}
@@ -68,7 +71,7 @@ const ImageComponent = ({ canvasRef }: { canvasRef: React.RefObject<HTMLDivEleme
                         />
                         </div>
                 </DraggableResizableComponent>
-                
+                </div>
             ))}
         </div>
     );

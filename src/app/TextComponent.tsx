@@ -1,28 +1,35 @@
 import React, { useContext, useRef } from 'react';
 import { element } from './types';
-import { AppContext } from '@/context/indext';
+import { AppContext } from '@/context';
 import DraggableResizableComponent from './DragResizerWarpper';
 
 const TextComponent = ({ canvasRef }: { canvasRef: React.RefObject<HTMLDivElement> }) => {
   const context = useContext(AppContext);
   const headings = context?.elements?.filter((elem) => elem.type === "text")[0]?.elements;
+  const onClick = (id: string) => {
+    if (context?.setState) {
+      context?.setState(id);
+      console.log(context);
+    }
+
+  }
 
   return (
     <div>
       {headings?.map((heading: element) => (
-        <DraggableResizableComponent key={heading.id} id={heading.id as string} conRef={canvasRef}>
+        <div key={heading.id}>
+        <DraggableResizableComponent key={heading.id} id={heading.id as string} conRef={canvasRef}
+          onClick={()=>onClick(heading.id as string)}
+        >
           <p
             contentEditable="true"
             style={{
-              fontSize: '18px',
               padding: '10px',
               outline: 'none',
-              // display: 'block',
               overflow: 'auto',
               width: "100%",
               height: "100%",
               opacity: 1,
-              // position: 'relative'
             }}
             onFocus={(e) => {
               const elem1 = document.getElementById(heading.id as string);
@@ -34,7 +41,8 @@ const TextComponent = ({ canvasRef }: { canvasRef: React.RefObject<HTMLDivElemen
           >
             {heading.text}
           </p>
-        </DraggableResizableComponent>
+          </DraggableResizableComponent>
+          </div>
       ))}
     </div>
   );

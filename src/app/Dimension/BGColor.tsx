@@ -1,9 +1,9 @@
-import { AppContext } from '@/context/indext';
+import { AppContext } from '@/context';
 import React, { useContext, useState, useEffect } from 'react';
 
 const BgColor = () => {
     const context = useContext(AppContext);
-    const [bgColor, setBgColor] = useState('');
+    const [bgColor, setBgColor] = useState<string>('#ffffff');
 
     const onChangeBgColor = () => {
         if (!context?.state) return;

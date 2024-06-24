@@ -1,9 +1,9 @@
-import { AppContext } from '@/context/indext';
+import { AppContext } from '@/context';
 import React, { useContext, useState, useEffect } from 'react';
 
 const Opacity = () => {
     const context = useContext(AppContext);
-    const [opacity, setOpacity] = useState(1);
+    const [opacity, setOpacity] = useState<number>(1);
 
     const onChangeOpacity = () => {
         if (!context?.state) return;

@@ -1,10 +1,10 @@
-import { AppContext } from '@/context/indext';
+import { AppContext } from '@/context';
 import React, { useContext, useState, useEffect } from 'react';
 
 const Padding = () => {
     const context = useContext(AppContext);
-    const [unit, setUnit] = useState('px');
-    const [padding, setPadding] = useState('');
+    const [unit, setUnit] = useState<string>('px');
+    const [padding, setPadding] = useState<string>('0');
 
     const onChangePadding = () => {
         if (!context?.state) return;

@@ -1,10 +1,10 @@
-import { AppContext } from '@/context/indext';
+import { AppContext } from '@/context';
 import React, { useContext, useState, useEffect } from 'react';
 
 const BorderWidth = () => {
     const context = useContext(AppContext);
     const [unit, setUnit] = useState('px');
-    const [borderWidth, setBorderWidth] = useState('');
+    const [borderWidth, setBorderWidth] = useState('1'); // default to 1px
 
     const onChangeBorderWidth = () => {
         if (!context?.state) return;

@@ -1,15 +1,26 @@
-import { AppContext } from '@/context/indext';
-import React, { useContext } from 'react';
+import { AppContext } from '@/context/index';
+import React, { useContext, useEffect, useState } from 'react';
 
 const Color = () => {
     const context = useContext(AppContext);
+    const [currentColor, setCurrentColor] = useState('');
 
-  const handleChangeColor = (color: any) => {
-      // if
+    useEffect(() => {
+        if (context?.state) {
+            const elem = document.getElementById(context.state);
+            if (elem) {
+                const color = getComputedStyle(elem).color;
+                setCurrentColor(color);
+            }
+        }
+    }, [context?.state]);
+
+    const handleChangeColor = (color: string) => {
         if (context?.state) {
             const elem = document.getElementById(context.state);
             if (!elem) return;
             elem.style.color = color;
+            setCurrentColor(color);
         }
     };
 
@@ -18,7 +29,10 @@ const Color = () => {
             <div className="styleLabel m-2 font-bold">
                 Font Color
             </div>
-            <select name="fontColor" id="fontColor"
+            <select
+                name="fontColor"
+                id="fontColor"
+                value={currentColor}
                 onChange={(e) => {
                     const value = e.target.value;
                     if (value) {
@@ -34,13 +48,15 @@ const Color = () => {
                 <option value="yellow">Yellow</option>
                 <option value="purple">Purple</option>
             </select>
-            <input type="color" name="colorPicker" id="colorPicker"
-                onChange={(e) => {
-                    const value = e.target.value;
-                    handleChangeColor(value);
-                }}
+            <input
+                type="color"
+                name="colorPicker"
+                id="colorPicker"
+                value={currentColor}
+                onChange={(e) => handleChangeColor(e.target.value)}
             />
         </div>
-    )
-}
+    );
+};
+
 export default Color;

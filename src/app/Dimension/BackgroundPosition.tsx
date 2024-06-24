@@ -1,11 +1,11 @@
-
-import { AppContext } from '@/context/indext';
-import React, { useContext } from 'react';
+import { AppContext } from '@/context';
+import React, { useContext, useEffect, useState } from 'react';
 
 const BackgroundPosition = () => {
     const context = useContext(AppContext);
+    const [position, setPosition] = useState<string>('center center');
 
-    const handleBackgroundPositionChange = (position: any) => {
+    const handleBackgroundPositionChange = (position: string) => {
         if (context?.state) {
             const elem = document.getElementById(context.state);
             if (!elem) return;
@@ -13,18 +13,20 @@ const BackgroundPosition = () => {
         }
     };
 
+    useEffect(() => {
+        handleBackgroundPositionChange(position);
+    }, [position]);
+
     return (
         <div className='background-position flex justify-between w-[100%] mt-3'>
             <div className="styleLabel m-2 font-bold">
                 Background Position
             </div>
-            <select name="backgroundPosition" id="backgroundPosition"
-                onChange={(e) => {
-                    const value = e.target.value;
-                    if (value) {
-                        handleBackgroundPositionChange(value);
-                    }
-                }}
+            <select
+                name="backgroundPosition"
+                id="backgroundPosition"
+                value={position}
+                onChange={(e) => setPosition(e.target.value)}
             >
                 <option value="">Select Position</option>
                 <option value="left top">Left Top</option>
@@ -38,7 +40,7 @@ const BackgroundPosition = () => {
                 <option value="center bottom">Center Bottom</option>
             </select>
         </div>
-    )
-}
+    );
+};
 
 export default BackgroundPosition;

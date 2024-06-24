@@ -1,4 +1,4 @@
-import { AppWrapperProvider } from '@/context/indext'
+import { AppWrapperProvider } from '@/context'
 import React, { useEffect, useState } from 'react'
 import FontSize from './Fonts/FontSize';
 import FontWeight from './Fonts/fontWeight';

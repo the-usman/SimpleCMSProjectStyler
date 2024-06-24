@@ -1,5 +1,5 @@
 
-import { AppContext } from '@/context/indext';
+import { AppContext } from '@/context';
 import React, { useContext } from 'react';
 
 const Animation = () => {

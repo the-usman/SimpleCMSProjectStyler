@@ -1,15 +1,26 @@
-
-import { AppContext } from '@/context/indext';
-import React, { useContext } from 'react';
+import { AppContext } from '@/context/index';
+import React, { useContext, useEffect, useState } from 'react';
 
 const FontFamily = () => {
     const context = useContext(AppContext);
+    const [currentFontFamily, setCurrentFontFamily] = useState('');
+
+    useEffect(() => {
+        if (context?.state) {
+            const elem = document.getElementById(context.state);
+            if (elem) {
+                const fontFamily = getComputedStyle(elem).fontFamily;
+                setCurrentFontFamily(fontFamily);
+            }
+        }
+    }, [context?.state]);
 
     const handleFontFamilyChange = (fontFamily: string) => {
         if (context?.state) {
             const elem = document.getElementById(context.state);
             if (!elem) return;
             elem.style.fontFamily = fontFamily;
+            setCurrentFontFamily(fontFamily);
         }
     };
 
@@ -18,7 +29,10 @@ const FontFamily = () => {
             <div className="styleLabel m-2 font-bold">
                 Font Family
             </div>
-            <select name="fontFamily" id="fontFamily"
+            <select
+                name="fontFamily"
+                id="fontFamily"
+                value={currentFontFamily}
                 onChange={(e) => {
                     const value = e.target.value;
                     if (value) {
@@ -37,6 +51,7 @@ const FontFamily = () => {
                 <option value="Verdana, sans-serif">Verdana</option>
             </select>
         </div>
-    )
-}
+    );
+};
+
 export default FontFamily;

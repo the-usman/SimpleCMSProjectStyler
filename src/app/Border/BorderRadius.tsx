@@ -1,10 +1,10 @@
-import { AppContext } from '@/context/indext';
+import { AppContext } from '@/context';
 import React, { useContext, useState, useEffect } from 'react';
 
 const BorderRadius = () => {
     const context = useContext(AppContext);
     const [unit, setUnit] = useState('px');
-    const [borderRadius, setBorderRadius] = useState('');
+    const [borderRadius, setBorderRadius] = useState('0'); // default to 0
 
     const onChangeBorderRadius = () => {
         if (!context?.state) return;
