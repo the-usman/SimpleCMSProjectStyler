@@ -90,7 +90,7 @@ const Panel = () => {
 
                 <div className="tabs flex">
 
-                    {tabs.map(tab => <div className={`w-[50%] p-4 hover:bg-white transition-all duration-500 cursor-pointer rounded-full ${activeTab === tab && 'bg-white'}`}
+                    {tabs.map((tab, index) => <div key={index} className={`w-[50%] p-4 hover:bg-white transition-all duration-500 cursor-pointer rounded-full ${activeTab === tab && 'bg-white'}`}
                         onClick={() => setActiveTab(tab)}
                     >
                         {tab}

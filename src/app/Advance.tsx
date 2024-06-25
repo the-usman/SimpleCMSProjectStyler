@@ -1,16 +1,18 @@
+import React, { useEffect, useState, useCallback } from 'react';
 import { AppWrapperProvider } from '@/context';
-import React, { useEffect, useState } from 'react';
+import CodeMirror  from '@uiw/react-codemirror';
+import { css } from '@codemirror/lang-css';
 
 const Advance = () => {
-    const [styles, setStyles] = useState(``);
+    const [styles, setStyles] = useState('');
     const context = AppWrapperProvider();
 
     if (!context) throw new Error('No context provided');
     const { state } = context;
 
-    const onChangeStyle = (e: any) => {
-        setStyles(e.target.innerText);
-    };
+    const onChangeStyle = useCallback((value: string) => {
+        setStyles(value);
+    }, []);
 
     const AddUpdateStyles = (element: string, stylesFull: string, styles: string): string => {
         let returnStyles = stylesFull;
@@ -33,19 +35,18 @@ const Advance = () => {
         return returnStyles;
     };
 
-    const styleContent = () => {
+    const styleContent = (element: string) => {
         if (!state) {
             alert("No element Selected");
             return;
         }
-        const cssStyle = document.getElementById('css')?.innerText || '';
         let styleElement = document.getElementsByTagName('style')[0];
         if (!styleElement) {
             styleElement = document.createElement('style');
             document.head.appendChild(styleElement);
         }
         let styleContent = styleElement.innerHTML;
-        styleContent = AddUpdateStyles(`.mainDivResizer_${state}`, styleContent, cssStyle);
+        styleContent = AddUpdateStyles(`.mainDivResizer_${element}`, styleContent, styles);
 
         styleElement.innerHTML = styleContent;
     };
@@ -58,30 +59,32 @@ const Advance = () => {
         const regex = new RegExp(`\\.${element}\\s*{[^}]*}\\s*`, 'gi');
         const matches = styleContent.match(regex);
         return matches ? matches.join('\n') : '';
-        
     };
+
+    const AddNewClass = (className: string) => {
+        if (!state) return;
+        const elem = document.getElementById(state);
+        if (!elem) return;
+        elem.classList.add(`${className}_u`);
+    }
 
     useEffect(() => {
         if (state) {
             const existingStyles = getExistingStyles(`mainDivResizer_${state}`);
-            console.log(existingStyles);
-            const cssBox = document.getElementById('css');
-            if (cssBox) {
-                cssBox.innerText = existingStyles;
-            }
+            setStyles(existingStyles);
         }
     }, [state]);
 
     return (
         <div>
             <div id='Advance' className='flex flex-col'>
-                <div
-                    contentEditable={true}
-                    className='h-[300px] overflow-auto'
-                    id='css'
-                    onInput={onChangeStyle}
-                ></div>
-                <button onClick={styleContent}>Style NOW</button>
+                <CodeMirror
+                    value={styles}
+                    height="300px"
+                    extensions={[css()]}
+                    onChange={(value) => onChangeStyle(value)}
+                />
+                <button onClick={() => styleContent(state as string)}>Style NOW</button>
                 <div>
                     See classes on this element
                     <br />

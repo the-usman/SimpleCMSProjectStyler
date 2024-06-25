@@ -5,6 +5,7 @@ import { Elemento, element } from './types';
 import TextComponent from './TextComponent';
 import ImageComponent from './ImageComponent';
 import Panel from './Panel';
+import ModalForclassName from './ModalForClass';
 
 
 export default function Home() {
@@ -13,6 +14,7 @@ export default function Home() {
   
   return (
     <div className="home flex overflow-hidden">
+      
       <Panel />
       <div className="canvas" ref={canvasRef} style={{ overflow: 'hidden !important', width: '75%', height: 'auto', position: 'relative' }}>
         <H1Component canvasRef={canvasRef} />
