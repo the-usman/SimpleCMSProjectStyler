@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { AppWrapperProvider } from '@/context';
-import CodeMirror  from '@uiw/react-codemirror';
+import CodeMirror from '@uiw/react-codemirror';
 import { css } from '@codemirror/lang-css';
+import ModalForClassName from './ModalForClass';
 
 const Advance = () => {
     const [styles, setStyles] = useState('');
     const context = AppWrapperProvider();
+    const [classStyles, setClassStyles] = useState('');
 
     if (!context) throw new Error('No context provided');
     const { state } = context;
@@ -35,24 +37,25 @@ const Advance = () => {
         return returnStyles;
     };
 
-    const styleContent = (element: string) => {
+    const styleContent = (element: string, styles: string) => {
         if (!state) {
             alert("No element Selected");
             return;
         }
-        let styleElement = document.getElementsByTagName('style')[0];
+        let styleElement = document.getElementById('custom-styles');
         if (!styleElement) {
             styleElement = document.createElement('style');
+            styleElement.id = 'custom-styles';
             document.head.appendChild(styleElement);
         }
         let styleContent = styleElement.innerHTML;
-        styleContent = AddUpdateStyles(`.mainDivResizer_${element}`, styleContent, styles);
+        styleContent = AddUpdateStyles(`${element}`, styleContent, styles);
 
         styleElement.innerHTML = styleContent;
     };
 
     const getExistingStyles = (element: string) => {
-        const styleElement = document.getElementsByTagName('style')[0];
+        const styleElement = document.getElementById('custom-styles');
         if (!styleElement) return '';
 
         const styleContent = styleElement.innerHTML;
@@ -64,9 +67,14 @@ const Advance = () => {
     const AddNewClass = (className: string) => {
         if (!state) return;
         const elem = document.getElementById(state);
-        if (!elem) return;
+        if (!elem) {
+            console.error(`Element with ID ${state} not found`);
+            return;
+        }
         elem.classList.add(`${className}_u`);
-    }
+        console.log(`Added class ${className}_u to element:`, elem);
+        styleContent(`.${className}_u`, classStyles);
+    };
 
     useEffect(() => {
         if (state) {
@@ -84,9 +92,16 @@ const Advance = () => {
                     extensions={[css()]}
                     onChange={(value) => onChangeStyle(value)}
                 />
-                <button onClick={() => styleContent(state as string)}>Style NOW</button>
+                <button onClick={() => styleContent(`.mainDivResizer_${state}`, styles)}>Style NOW</button>
                 <div>
-                    See classes on this element
+                    <ModalForClassName
+                        buttonText="Add Class"
+                        headingText="Add New classes to Style"
+                        isNew={true}
+                        setClassStyles={setClassStyles}
+                        classStyles={classStyles}
+                        AddNewClass={AddNewClass}
+                    />
                     <br />
                     <br />
                 </div>

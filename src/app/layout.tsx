@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Waterfall } from "next/font/google";
 import "./globals.css";
 import { AppWrapper } from "@/context";
 
@@ -17,9 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <AppWrapper>
-        <body className={inter.className}>{children}</body>
-      </AppWrapper>
+        <AppWrapper>
+          <body className={inter.className}>{children}</body>
+        </AppWrapper>
     </html>
   );
 }

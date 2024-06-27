@@ -1,18 +1,35 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
+import CodeMirror from '@uiw/react-codemirror';
+import { css } from '@codemirror/lang-css';
 
-const ModalForclassName = ({buttonText, headingText, isNew}: {buttonText: string, headingText: string, isNew: boolean}) => {
+interface ModalForClassNameProps {
+    buttonText: string;
+    headingText: string;
+    isNew: boolean;
+    setClassStyles: (className: string) => void;
+    classStyles: string;
+    AddNewClass: (element: string) => void;
+}
+
+const ModalForClassName: React.FC<ModalForClassNameProps> = ({ buttonText, headingText, isNew, setClassStyles, classStyles, AddNewClass }) => {
     const [modalOpen, setModalOpen] = useState(false);
+    const [newClass, setNewClass] = useState("");
 
-    const toggleModal = () => {
+    const onClickSave = () => {
+        AddNewClass(newClass);
         setModalOpen(!modalOpen);
     };
+
+    const onChangeStyle = useCallback((value: string) => {
+        setClassStyles(value);
+    }, [setClassStyles]);
 
     return (
         <div className="max-w-2xl mx-auto">
             <button
                 className="block"
                 type="button"
-                onClick={toggleModal}
+                onClick={() => setModalOpen(!modalOpen)}
             >
                 {buttonText}
             </button>
@@ -30,7 +47,7 @@ const ModalForclassName = ({buttonText, headingText, isNew}: {buttonText: string
                             <button
                                 type="button"
                                 className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                                onClick={toggleModal}
+                                onClick={() => setModalOpen(!modalOpen)}
                             >
                                 <svg
                                     className="w-5 h-5"
@@ -47,23 +64,38 @@ const ModalForclassName = ({buttonText, headingText, isNew}: {buttonText: string
                             </button>
                         </div>
                         <div className="p-6 space-y-6">
-                            {isNew && <div >
-                                <input type="text" />
-                            </div>} 
-                            <div>code</div>
+                            {isNew && (
+                                <div>
+                                    <input
+                                        type="text"
+                                        value={newClass}
+                                        onChange={(e) => setNewClass(e.target.value)}
+                                        placeholder="Enter class name"
+                                        className="w-full p-2 border rounded"
+                                    />
+                                </div>
+                            )}
+                            <div>
+                                <CodeMirror
+                                    value={classStyles}
+                                    height="300px"
+                                    extensions={[css()]}
+                                    onChange={(value) => onChangeStyle(value)}
+                                />
+                            </div>
                         </div>
                         <div className="flex space-x-2 items-center p-6 border-t border-gray-200 rounded-b dark:border-gray-600">
                             <button
                                 type="button"
                                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                                onClick={toggleModal}
+                                onClick={onClickSave}
                             >
-                                {isNew ? "Add Class": "Update Class"}
+                                {isNew ? "Add Class" : "Update Class"}
                             </button>
                             <button
                                 type="button"
                                 className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-gray-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600"
-                                onClick={toggleModal}
+                                onClick={() => setModalOpen(!modalOpen)}
                             >
                                 Cancel
                             </button>
@@ -73,6 +105,6 @@ const ModalForclassName = ({buttonText, headingText, isNew}: {buttonText: string
             </div>
         </div>
     );
-}
+};
 
-export default ModalForclassName;
+export default ModalForClassName;

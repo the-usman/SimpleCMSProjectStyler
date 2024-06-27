@@ -28,7 +28,8 @@ const H1Component: FC<H1props> = ({ canvasRef }) => {
                         onClick={() => onClick(heading.id as string)}
                     >
                         <h1
-                            contentEditable="true"
+                            contentEditable={true}
+                            suppressContentEditableWarning={true}
                             style={{
                                 outline: 'none',
                                 overflow: 'auto',

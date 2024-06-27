@@ -25,6 +25,7 @@ const TextComponent = ({ canvasRef }: { canvasRef: React.RefObject<HTMLDivElemen
         >
           <p
             contentEditable="true"
+            suppressContentEditableWarning={true}
             style={{
               padding: '10px',
               outline: 'none',
