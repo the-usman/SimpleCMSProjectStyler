@@ -8,6 +8,9 @@ const Advance = () => {
     const [styles, setStyles] = useState('');
     const context = AppWrapperProvider();
     const [classStyles, setClassStyles] = useState('');
+    const [AllClasses, setAllClasses] = useState<string[]>([
+        ''
+    ]);
 
     if (!context) throw new Error('No context provided');
     const { state } = context;
@@ -72,20 +75,41 @@ const Advance = () => {
             return;
         }
         elem.classList.add(`${className}_u`);
-        console.log(`Added class ${className}_u to element:`, elem);
         styleContent(`.${className}_u`, classStyles);
+        GetAllClass();
     };
+
+    const GetAllClass = () => {
+        if (!state) return;
+        const elem = document.getElementById(state);
+        const arr: string[] = [];
+        elem?.classList.forEach((element) => {
+            if (element.split("_u").pop() === "") {
+                arr.push(element.split("_u")[0] as string);
+                // console.log(arr);
+            }
+        })
+        setAllClasses(arr);
+    }
+
+    const UpdateClassStyles = (className: string) => {
+        if (!state) return;
+        styleContent(`.${className}_u`, classStyles);
+    }
 
     useEffect(() => {
         if (state) {
             const existingStyles = getExistingStyles(`mainDivResizer_${state}`);
             setStyles(existingStyles);
         }
+        GetAllClass();
     }, [state]);
+
+
 
     return (
         <div>
-            <div id='Advance' className='flex flex-col'>
+            <div id='Advance' className='flex flex-col p-2'>
                 <CodeMirror
                     value={styles}
                     height="300px"
@@ -106,7 +130,17 @@ const Advance = () => {
                     <br />
                 </div>
                 <div>
-                    See All existed classes
+                    <h1 className='text-2xl font-bold'>All Classes on This Element</h1>
+                    <br />
+                    {AllClasses.map( className => <ModalForClassName
+                        buttonText={`Update ${className}`}
+                        headingText={`Update Class ${className}`}
+                        isNew={false}
+                        setClassStyles={setClassStyles}
+                        classStyles={classStyles}
+                        AddNewClass={UpdateClassStyles}
+                        getExistingStyles = {getExistingStyles}
+                    />)}
                     <br />
                 </div>
             </div>

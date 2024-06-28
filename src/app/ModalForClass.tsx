@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import CodeMirror from '@uiw/react-codemirror';
 import { css } from '@codemirror/lang-css';
 
@@ -9,20 +9,32 @@ interface ModalForClassNameProps {
     setClassStyles: (className: string) => void;
     classStyles: string;
     AddNewClass: (element: string) => void;
+    getExistingStyles?: (element: string) => string;
 }
 
-const ModalForClassName: React.FC<ModalForClassNameProps> = ({ buttonText, headingText, isNew, setClassStyles, classStyles, AddNewClass }) => {
+const ModalForClassName: React.FC<ModalForClassNameProps> = ({ buttonText, headingText, isNew, setClassStyles, classStyles, AddNewClass, getExistingStyles }) => {
     const [modalOpen, setModalOpen] = useState(false);
     const [newClass, setNewClass] = useState("");
 
-    const onClickSave = () => {
+    const onClickSave = async () => {
         AddNewClass(newClass);
+        setNewClass('');
+        setClassStyles('')
         setModalOpen(!modalOpen);
     };
 
     const onChangeStyle = useCallback((value: string) => {
         setClassStyles(value);
     }, [setClassStyles]);
+
+    useEffect(() => {
+        if (getExistingStyles) {
+            const classSty = getExistingStyles(`${headingText.split(" ").pop()}_u` );
+            console.log("return value is ",classSty.replace(`.${headingText.split(" ").pop()}_u`, ''));
+            setClassStyles(classSty.replace(`.${headingText.split(" ").pop()}_u`, ''))
+        }
+        setNewClass(headingText.split(" ").pop() as string)
+    }, [modalOpen]);
 
     return (
         <div className="max-w-2xl mx-auto">
