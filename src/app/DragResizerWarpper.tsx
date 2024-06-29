@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import React, { useRef, useState, useEffect } from 'react';
 
 type Sizer = {
@@ -15,10 +16,12 @@ const DraggableResizableComponent = ({ children, id, conRef, onClick }: { childr
     const topRightRef = useRef<HTMLDivElement>(null);
     const bottomLeftRef = useRef<HTMLDivElement>(null);
     const bottomRightRef = useRef<HTMLDivElement>(null);
+    const buttonLockRef = useRef<HTMLButtonElement>(null);
     const childRef = useRef<HTMLDivElement>(null);
 
     const [isDragging, setIsDragging] = useState(false);
     const [isResizing, setIsResizing] = useState(false);
+    const [dragLock, setDragLock] = useState(false);
     const [pos, setPos] = useState<Sizer>({ clientX: 0, clientY: 0 });
     const [startX, setStartX] = useState(0);
     const [startY, setStartY] = useState(0);
@@ -346,6 +349,7 @@ const DraggableResizableComponent = ({ children, id, conRef, onClick }: { childr
     };
 
     useEffect(() => {
+        if (dragLock) return;
         const resizeableEle = ref.current;
         if (!resizeableEle) return;
         resizeableEle.style.top = `${offsetY}px`;
@@ -414,13 +418,13 @@ const DraggableResizableComponent = ({ children, id, conRef, onClick }: { childr
 
         const handleClick = (e: MouseEvent) => {
             setIsActive(true);
-            
+
             e.stopPropagation();
             if (onClick) {
                 if (childRef.current) {
                     childRef.current.addEventListener("click", (e) => {
                         onClick();
-                        
+
                     })
                 }
             }
@@ -454,32 +458,49 @@ const DraggableResizableComponent = ({ children, id, conRef, onClick }: { childr
                 })
             }
         }
-    },  [])
+    }, [])
+
+    useEffect(() => {
+        buttonLockRef.current?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            setDragLock(!dragLock);
+        })
+    })
 
     return (
         <div
-        tabIndex={100}
+            tabIndex={100}
             ref={ref}
             id={id}
             onMouseDown={(e) => onMouseDownDrag(e)}
-            style={{ position: 'absolute', left: offsetX, top: offsetY, boxSizing: 'border-box', padding: '10px' }}
-            className={`mainDivResizer mainDivResizer_${id} ${isActive ? 'border border-black' : 'border-none'}`}
+            style={{
+                position: 'absolute', left: offsetX, top: offsetY, boxSizing: 'border-box', padding: '10px',
+                border: isActive ? '1px solid black' : 'none',
+            }}
+            className={`mainDivResizer mainDivResizer_${id} `}
         >
             <span style={{ position: 'absolute', zIndex: -1, color: 'transparent' }}>usman</span>
-            <div  ref={childRef} className='overflow-hidden w-[100%] h-[100%]'>
+            <div ref={childRef} className='overflow-hidden w-[100%] h-[100%]'>
 
-            {children}     
+                {children}
             </div>
-            
-            <div ref={topLeftRef} className={`topLeftRef absolute ${isActive && ('h-[40px] w-[40px]')} cursor-nw-resize`} style={{ top: '-40px', left: '-40px', borderLeft: '1px solid black', borderTop: '1px solid black', borderStyle:'dashed' }}></div>
-            <div ref={topRightRef} className={`topRightRef absolute ${isActive && ('h-[40px] w-[40px]')} cursor-ne-resize`} style={{ top: '-40px', right: '-40px', borderRight: '1px solid black', borderTop: '1px solid black', borderStyle:'dashed' }}></div>
-            <div ref={bottomLeftRef} className={`bottomLeftRef absolute ${isActive && ('h-[40px] w-[40px]')} cursor-sw-resize`} style={{ bottom: '-40px', left: '-40px', borderLeft: '1px solid black', borderBottom: '1px solid black', borderStyle:'dashed' }}></div>
-            <div ref={bottomRightRef} className={`bottomRightRef absolute ${isActive && ('h-[40px] w-[40px]')} cursor-se-resize`} style={{ bottom: '-40px', right: '-40px', borderRight: '1px solid black', borderBottom: '1px solid black', borderStyle:'dashed' }}></div>
-            
-            <div ref={topRef} className={`topRef absolute ${isActive && ('h-[30px] w-[calc(100%+60px)]')}  cursor-ns-resize`} style={{ top: '-30px', left: '-30px', borderTop: '1px solid black', borderStyle:'dashed' }}></div>
-            <div ref={leftRef} className={`leftRef absolute ${isActive && ('h-[calc(100%+60px)] w-[30px]')} cursor-ew-resize`} style={{ top: '-30px', left: '-30px', borderLeft: '1px solid black', borderStyle:'dashed' }}></div>
-            <div ref={rightRef} className={`rightRef absolute ${isActive && ('h-[calc(100%+60px)] w-[30px]')}  cursor-ew-resize`} style={{ top: '-30px', right: '-30px', borderRight: '1px solid black', borderStyle:'dashed' }}></div>
-            <div ref={bottomRef} className={`bottomRef absolute ${isActive && ('h-[30px] w-[calc(100%+60px)]')}  cursor-ns-resize`} style={{ bottom: '-30px', left: '-30px', width: `calc(100% +60px)`, borderBottom: '1px solid black', borderStyle:'dashed' }}></div>
+
+            <div ref={topLeftRef} className={`topLeftRef absolute ${isActive && ('h-[40px] w-[40px]')} cursor-nw-resize`} style={{ top: '-40px', left: '-40px', borderLeft: '1px solid black', borderTop: '1px solid black', borderStyle: 'dashed' }}></div>
+            <div ref={topRightRef} className={`topRightRef absolute ${isActive && ('h-[40px] w-[40px]')} cursor-ne-resize`} style={{ top: '-40px', right: '-40px', borderRight: '1px solid black', borderTop: '1px solid black', borderStyle: 'dashed' }}></div>
+            <div ref={bottomLeftRef} className={`bottomLeftRef absolute ${isActive && ('h-[40px] w-[40px]')} cursor-sw-resize`} style={{ bottom: '-40px', left: '-40px', borderLeft: '1px solid black', borderBottom: '1px solid black', borderStyle: 'dashed' }}></div>
+            <div ref={bottomRightRef} className={`bottomRightRef absolute ${isActive && ('h-[40px] w-[40px]')} cursor-se-resize`} style={{ bottom: '-40px', right: '-40px', borderRight: '1px solid black', borderBottom: '1px solid black', borderStyle: 'dashed' }}></div>
+
+            <div ref={topRef} className={`topRef absolute ${isActive && ('h-[30px] w-[calc(100%+60px)]')}  cursor-ns-resize`} style={{ top: '-30px', left: '-30px', borderTop: '1px solid black', borderStyle: 'dashed' }}></div>
+            <div ref={leftRef} className={`leftRef absolute ${isActive && ('h-[calc(100%+60px)] w-[30px]')} cursor-ew-resize`} style={{ top: '-30px', left: '-30px', borderLeft: '1px solid black', borderStyle: 'dashed' }}></div>
+            <div ref={rightRef} className={`rightRef absolute ${isActive && ('h-[calc(100%+60px)] w-[30px]')}  cursor-ew-resize`} style={{ top: '-30px', right: '-30px', borderRight: '1px solid black', borderStyle: 'dashed' }}></div>
+            <div ref={bottomRef} className={`bottomRef absolute ${isActive && ('h-[30px] w-[calc(100%+60px)]')}  cursor-ns-resize`} style={{ bottom: '-30px', left: '-30px', width: `calc(100% +60px)`, borderBottom: '1px solid black', borderStyle: 'dashed' }}></div>
+            {isActive && <button
+                className={`bottomRef absolute flex justify-center`}
+                style={{ top: '-60px', width: `calc(100% +60px)`, zIndex: 999999999999 }}
+                ref={buttonLockRef}
+            >
+                {dragLock ? <Image src={'/locked.png'} width={30} height={30} alt='locked' /> : <Image src={'/open-lock.png'} alt='lock' width={30} height={30} />}
+            </button>}
         </div>
     );
 };

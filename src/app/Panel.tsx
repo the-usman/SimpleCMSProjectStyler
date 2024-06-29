@@ -21,7 +21,7 @@ const Panel = () => {
 
 
 
-    const { setElements, elements, state, images, setImages } = context;
+    const { setElements, elements, state, dragLock, setDragLock } = context;
 
     const updateElements = ({ type, text }: Arg): void => {
         if (setElements && elements) {
@@ -109,8 +109,6 @@ const Panel = () => {
                         {activeTab === 'Styling' && <Styler/>}
                     
                 <Advance />
-
-                
             </div>
         </div>
     )

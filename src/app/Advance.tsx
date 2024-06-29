@@ -140,6 +140,7 @@ const Advance = () => {
                         classStyles={classStyles}
                         AddNewClass={UpdateClassStyles}
                         getExistingStyles = {getExistingStyles}
+                    key={className}
                     />)}
                     <br />
                 </div>

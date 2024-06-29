@@ -1,67 +1,82 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 
-type sizer = {
-  clientX: number,
-  clientY: number
-}
-
-const Resizer = ({ children }: { children: React.ReactNode }) => {
+const ResizableComponent = ({children, id, conRef, isActive, setIsResizing }: any) => {
   const ref = useRef<HTMLDivElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
   const rightRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
-  const [pos, setPos] = useState<sizer>({ clientX: 0, clientY: 0 });
+  const topLeftRef = useRef<HTMLDivElement>(null);
+  const topRightRef = useRef<HTMLDivElement>(null);
+  const bottomLeftRef = useRef<HTMLDivElement>(null);
+  const bottomRightRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const resizeableEle = ref.current;
     if (!resizeableEle) return;
     const styles = window.getComputedStyle(resizeableEle as HTMLElement);
-    let width = parseInt(styles.width, 10);
-    let height = parseInt(styles.height, 10);
+    let width = parseInt(styles.width, 0);
+    let height = parseInt(styles.height, 0);
     let x = 0;
     let y = 0;
 
-    resizeableEle.style.top = "50px";
-    resizeableEle.style.left = "50px";
+    const container = conRef.current;
+    if (!container) return;
+
+    const containerRect = container.getBoundingClientRect();
 
     // Right resize
-    const onMouseMoveRightResize = (event: any) => {
+    const onMouseMoveRightResize = (event: MouseEvent) => {
       const dx = event.clientX - x;
       x = event.clientX;
-      width = width + dx;
-      resizeableEle.style.width = `${width}px`;
+      const newWidth = width + dx;
+      const elementRect = resizeableEle.getBoundingClientRect();
+      if (elementRect.right + dx <= containerRect.right) {
+        width = newWidth;
+        resizeableEle.style.width = `${width}px`;
+      }
     };
 
-    const onMouseUpRightResize = (event: any) => {
+    const onMouseUpRightResize = () => {
+      setIsResizing(false);
       document.removeEventListener("mousemove", onMouseMoveRightResize);
       document.removeEventListener("mouseup", onMouseUpRightResize);
     };
 
-    const onMouseDownRightResize = (event: any) => {
+    const onMouseDownRightResize = (event: MouseEvent) => {
       event.stopPropagation();
       x = event.clientX;
+      setIsResizing(true);
       resizeableEle.style.left = styles.left;
       document.addEventListener("mousemove", onMouseMoveRightResize);
       document.addEventListener("mouseup", onMouseUpRightResize);
     };
 
     // Top resize
-    const onMouseMoveTopResize = (event: any) => {
+    const minHeight = 30;
+    const onMouseMoveTopResize = (event: MouseEvent) => {
       const dy = event.clientY - y;
-      height = height - dy;
-      y = event.clientY;
-      resizeableEle.style.height = `${height}px`;
+      const newHeight = height - dy;
+      const elementRect = resizeableEle.getBoundingClientRect();
+      if (newHeight > minHeight && elementRect.top + dy >= containerRect.top) {
+        height = newHeight;
+        y = event.clientY;
+        resizeableEle.style.height = `${height}px`;
+        const currentTop = parseInt(resizeableEle.style.top || '0', 0);
+        resizeableEle.style.top = `${currentTop + dy}px`;
+      }
     };
 
-    const onMouseUpTopResize = (event: any) => {
+    const onMouseUpTopResize = () => {
+      setIsResizing(false);
       document.removeEventListener("mousemove", onMouseMoveTopResize);
       document.removeEventListener("mouseup", onMouseUpTopResize);
     };
 
-    const onMouseDownTopResize = (event: any) => {
+    const onMouseDownTopResize = (event: MouseEvent) => {
       event.stopPropagation();
       y = event.clientY;
+      setIsResizing(true);
       const styles = window.getComputedStyle(resizeableEle);
       resizeableEle.style.bottom = styles.bottom;
       document.addEventListener("mousemove", onMouseMoveTopResize);
@@ -69,21 +84,27 @@ const Resizer = ({ children }: { children: React.ReactNode }) => {
     };
 
     // Bottom resize
-    const onMouseMoveBottomResize = (event: any) => {
+    const onMouseMoveBottomResize = (event: MouseEvent) => {
       const dy = event.clientY - y;
-      height = height + dy;
-      y = event.clientY;
-      resizeableEle.style.height = `${height}px`;
+      const newHeight = height + dy;
+      const elementRect = resizeableEle.getBoundingClientRect();
+      if (elementRect.bottom + dy <= containerRect.bottom) {
+        height = newHeight;
+        y = event.clientY;
+        resizeableEle.style.height = `${height}px`;
+      }
     };
 
-    const onMouseUpBottomResize = (event: any) => {
+    const onMouseUpBottomResize = () => {
+      setIsResizing(false);
       document.removeEventListener("mousemove", onMouseMoveBottomResize);
       document.removeEventListener("mouseup", onMouseUpBottomResize);
     };
 
-    const onMouseDownBottomResize = (event: any) => {
+    const onMouseDownBottomResize = (event: MouseEvent) => {
       event.stopPropagation();
       y = event.clientY;
+      setIsResizing(true);
       const styles = window.getComputedStyle(resizeableEle);
       resizeableEle.style.top = styles.top;
       document.addEventListener("mousemove", onMouseMoveBottomResize);
@@ -91,61 +112,163 @@ const Resizer = ({ children }: { children: React.ReactNode }) => {
     };
 
     // Left resize
-    const minWidth = 100; // Set your minimum width here
-
-    const onMouseMoveLeftResize = (event: any) => {
+    const minWidth = 30;
+    const onMouseMoveLeftResize = (event: MouseEvent) => {
       const dx = event.clientX - x;
       const newWidth = width - dx;
-
-      if (newWidth >= minWidth) {
+      const elementRect = resizeableEle.getBoundingClientRect();
+      if (newWidth >= minWidth && elementRect.left + dx >= containerRect.left) {
         width = newWidth;
         x = event.clientX;
-        resizeableEle.style.width = `${width}px`;
-
         const currentLeft = parseInt(resizeableEle.style.left || '0', 10);
         resizeableEle.style.left = `${currentLeft + dx}px`;
-      } 
+        resizeableEle.style.width = `${width}px`;
+      }
     };
 
-    const onMouseUpLeftResize = (event: any) => {
+    const onMouseUpLeftResize = () => {
+      setIsResizing(false);
       document.removeEventListener("mousemove", onMouseMoveLeftResize);
       document.removeEventListener("mouseup", onMouseUpLeftResize);
     };
 
-    const onMouseDownLeftResize = (event: any) => {
+    const onMouseDownLeftResize = (event: MouseEvent) => {
       event.stopPropagation();
       x = event.clientX;
+      setIsResizing(true);
       resizeableEle.style.right = styles.right;
       document.addEventListener("mousemove", onMouseMoveLeftResize);
       document.addEventListener("mouseup", onMouseUpLeftResize);
     };
 
-    const resizerRight = rightRef.current;
-    if (resizerRight) resizerRight.addEventListener("mousedown", onMouseDownRightResize);
-    const resizerTop = topRef.current;
-    if (resizerTop) resizerTop.addEventListener("mousedown", onMouseDownTopResize);
-    const resizerBottom = bottomRef.current;
-    if (resizerBottom) resizerBottom.addEventListener("mousedown", onMouseDownBottomResize);
-    const resizerLeft = leftRef.current;
-    if (resizerLeft) resizerLeft.addEventListener("mousedown", onMouseDownLeftResize);
+    // Top-right resize
+    const onMouseMoveTopRightResize = (event: MouseEvent) => {
+      onMouseMoveRightResize(event);
+      onMouseMoveTopResize(event);
+    };
+
+    const onMouseUpTopRightResize = () => {
+      setIsResizing(false);
+      document.removeEventListener("mousemove", onMouseMoveTopRightResize);
+      document.removeEventListener("mouseup", onMouseUpTopRightResize);
+    };
+
+    const onMouseDownTopRightResize = (event: MouseEvent) => {
+      event.stopPropagation();
+      x = event.clientX;
+      y = event.clientY;
+      setIsResizing(true);
+      document.addEventListener("mousemove", onMouseMoveTopRightResize);
+      document.addEventListener("mouseup", onMouseUpTopRightResize);
+    };
+
+    // Bottom-right resize
+    const onMouseMoveBottomRightResize = (event: MouseEvent) => {
+      onMouseMoveRightResize(event);
+      onMouseMoveBottomResize(event);
+    };
+
+    const onMouseUpBottomRightResize = () => {
+      setIsResizing(false);
+      document.removeEventListener("mousemove", onMouseMoveBottomRightResize);
+      document.removeEventListener("mouseup", onMouseUpBottomRightResize);
+    };
+
+    const onMouseDownBottomRightResize = (event: MouseEvent) => {
+      event.stopPropagation();
+      x = event.clientX;
+      y = event.clientY;
+      setIsResizing(true);
+      document.addEventListener("mousemove", onMouseMoveBottomRightResize);
+      document.addEventListener("mouseup", onMouseUpBottomRightResize);
+    };
+
+    // Bottom-left resize
+    const onMouseMoveBottomLeftResize = (event: MouseEvent) => {
+      onMouseMoveBottomResize(event);
+      onMouseMoveLeftResize(event);
+    };
+
+    const onMouseUpBottomLeftResize = () => {
+      setIsResizing(false);
+      document.removeEventListener("mousemove", onMouseMoveBottomLeftResize);
+      document.removeEventListener("mouseup", onMouseUpBottomLeftResize);
+    };
+
+    const onMouseDownBottomLeftResize = (event: MouseEvent) => {
+      event.stopPropagation();
+      x = event.clientX;
+      y = event.clientY;
+      setIsResizing(true);
+      document.addEventListener("mousemove", onMouseMoveBottomLeftResize);
+      document.addEventListener("mouseup", onMouseUpBottomLeftResize);
+    };
+
+    // Top-left resize
+    const onMouseMoveTopLeftResize = (event: MouseEvent) => {
+      onMouseMoveTopResize(event);
+      onMouseMoveLeftResize(event);
+    };
+
+    const onMouseUpTopLeftResize = () => {
+      setIsResizing(false);
+      document.removeEventListener("mousemove", onMouseMoveTopLeftResize);
+      document.removeEventListener("mouseup", onMouseUpTopLeftResize);
+    };
+
+    const onMouseDownTopLeftResize = (event: MouseEvent) => {
+      event.stopPropagation();
+      x = event.clientX;
+      y = event.clientY;
+      setIsResizing(true);
+      document.addEventListener("mousemove", onMouseMoveTopLeftResize);
+      document.addEventListener("mouseup", onMouseUpTopLeftResize);
+    };
+
+    const resizers = [
+      { ref: rightRef, onMouseDown: onMouseDownRightResize },
+      { ref: topRef, onMouseDown: onMouseDownTopResize },
+      { ref: bottomRef, onMouseDown: onMouseDownBottomResize },
+      { ref: leftRef, onMouseDown: onMouseDownLeftResize },
+      { ref: topRightRef, onMouseDown: onMouseDownTopRightResize },
+      { ref: bottomRightRef, onMouseDown: onMouseDownBottomRightResize },
+      { ref: bottomLeftRef, onMouseDown: onMouseDownBottomLeftResize },
+      { ref: topLeftRef, onMouseDown: onMouseDownTopLeftResize },
+    ];
+
+    resizers.forEach(({ ref, onMouseDown }) => {
+      if (ref.current) {
+        ref.current.addEventListener("mousedown", onMouseDown);
+      }
+    });
 
     return () => {
-      if (resizerRight) resizerRight.removeEventListener("mousedown", onMouseDownRightResize);
-      if (resizerTop) resizerTop.removeEventListener("mousedown", onMouseDownTopResize);
-      if (resizerBottom) resizerBottom.removeEventListener("mousedown", onMouseDownBottomResize);
-      if (resizerLeft) resizerLeft.removeEventListener("mousedown", onMouseDownLeftResize);
+      resizers.forEach(({ ref, onMouseDown }) => {
+        if (ref.current) {
+          ref.current.removeEventListener("mousedown", onMouseDown);
+        }
+      });
     };
-  }, []);
+  }, [conRef]);
 
   return (
-    <div ref={ref} className='mainDivResizer absolute'>
+    <div
+      ref={ref}
+      id={id}
+      style={{ width: '150px', height: '150px', position: 'absolute' }}
+      className={`mainDivResizer mainDivResizer_${id} ${isActive ? 'border border-black' : 'border-none'}`}
+    >
       {children}
-      <div ref={topRef} className='topRef absolute h-[10px] cursor-ns-resize' style={{ top: 0, left: 0, right: 0 }}></div>
-      <div ref={leftRef} className='leftRef absolute w-[10px] cursor-ew-resize' style={{ top: 0, bottom: 0, left: 0 }}></div>
-      <div ref={rightRef} className='rightRef absolute w-[10px] cursor-ew-resize' style={{ top: 0, bottom: 0, right: 0 }}></div>
-      <div ref={bottomRef} className='bottomRef absolute h-[10px] cursor-ns-resize' style={{ left: 0, right: 0, bottom: 0 }}></div>
+      <div ref={topRef} className="resizer resizer-t" />
+      <div ref={leftRef} className="resizer resizer-l" />
+      <div ref={rightRef} className="resizer resizer-r" />
+      <div ref={bottomRef} className="resizer resizer-b" />
+      <div ref={topLeftRef} className="resizer resizer-tl" />
+      <div ref={topRightRef} className="resizer resizer-tr" />
+      <div ref={bottomLeftRef} className="resizer resizer-bl" />
+      <div ref={bottomRightRef} className="resizer resizer-br" />
     </div>
   );
 };
 
-export default Resizer;
+export default ResizableComponent;
