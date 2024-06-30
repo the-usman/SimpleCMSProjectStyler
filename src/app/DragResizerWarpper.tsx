@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import React, { useRef, useState, useEffect } from 'react';
+import TextEditor from './SelectionWraper';
 
 type Sizer = {
     clientX: number,
@@ -481,8 +482,9 @@ const DraggableResizableComponent = ({ children, id, conRef, onClick }: { childr
         >
             <span style={{ position: 'absolute', zIndex: -1, color: 'transparent' }}>usman</span>
             <div ref={childRef} className='overflow-hidden w-[100%] h-[100%]'>
-
-                {children}
+                <TextEditor id={id}>
+                    {children}
+                </TextEditor>
             </div>
 
             <div ref={topLeftRef} className={`topLeftRef absolute ${isActive && ('h-[40px] w-[40px]')} cursor-nw-resize`} style={{ top: '-40px', left: '-40px', borderLeft: '1px solid black', borderTop: '1px solid black', borderStyle: 'dashed' }}></div>
