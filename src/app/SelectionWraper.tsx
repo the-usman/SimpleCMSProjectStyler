@@ -1,6 +1,6 @@
 import { AppContext } from '@/context';
 import React, { useRef, useState, useEffect, useContext } from 'react';
-import { FaBold, FaItalic, FaLink, FaPaintBrush, FaFillDrip } from 'react-icons/fa';
+import { FaBold, FaItalic, FaLink, FaPaintBrush, FaFillDrip, FaListOl, FaListUl } from 'react-icons/fa';
 import { Context } from './types';
 
 const TextEditor = ({ children, id }: { children: React.ReactNode, id: string }) => {
@@ -12,6 +12,8 @@ const TextEditor = ({ children, id }: { children: React.ReactNode, id: string })
     const largeSizeRef = useRef<HTMLButtonElement | null>(null);
     const hugeSizeRef = useRef<HTMLButtonElement | null>(null);
     const smallSizeRef = useRef<HTMLButtonElement | null>(null);
+    const orderedListRef = useRef<HTMLButtonElement | null>(null);
+    const unorderedListRef = useRef<HTMLButtonElement | null>(null);
     const [isActive, setIsActive] = useState(false);
 
     const context = useContext(AppContext);
@@ -71,7 +73,56 @@ const TextEditor = ({ children, id }: { children: React.ReactNode, id: string })
             }
         };
 
+        const handleKeyDown = (e: KeyboardEvent) => {
+            const selection = window.getSelection();
+            if (!selection?.rangeCount) return;
+
+            const range = selection.getRangeAt(0);
+            const startContainer = range.startContainer as Text;
+            const text = startContainer.textContent;
+            if (text) {
+                const startText = text.slice(0, range.startOffset);
+                if (e.key === ' ' && startText.endsWith('-')) {
+                    e.preventDefault();
+                    const newNode = document.createElement('li');
+                    range.deleteContents();
+                    range.insertNode(newNode);
+                    startContainer.textContent = '';
+                } else if (e.key === ' ' && startText.endsWith('^')) {
+                    e.preventDefault();
+                    const newNode = document.createElement('li');
+                    newNode.classList.add('list-decimal')
+                    range.deleteContents();
+                    range.insertNode(newNode);
+                    startContainer.textContent = '';
+                } else if (e.key === 'ArrowDown') {
+                    const li = startContainer.parentElement;
+                    if (li && li.tagName === 'LI') {
+                        const ul = li.parentElement;
+                        if (ul) {
+                            // Create a new div to place the cursor
+                            const newNode = document.createElement('div');
+                            newNode.innerHTML = '<br>'; // Add a break line to place the cursor.
+                            ul.insertAdjacentElement('afterend', newNode);
+
+                            // Move cursor to the new div
+                            const newRange = document.createRange();
+                            const sel = window.getSelection();
+                            newRange.setStart(newNode, 0);
+                            newRange.collapse(true);
+                            sel?.removeAllRanges();
+                            sel?.addRange(newRange);
+
+                            // Prevent further default list behavior
+                            e.preventDefault();
+                        }
+                    }
+                }
+            }
+        };
+
         document.addEventListener('selectionchange', handleSelectionChange);
+        document.addEventListener('keydown', handleKeyDown);
 
         if (boldRef.current) {
             boldRef.current.addEventListener('click', () => {
@@ -112,6 +163,14 @@ const TextEditor = ({ children, id }: { children: React.ReactNode, id: string })
             wrapSelectedText('span', { fontSize: '12px' });
         };
 
+        const handleOrderedList = () => {
+            wrapSelectedText('ol');
+        };
+
+        const handleUnorderedList = () => {
+            wrapSelectedText('ul');
+        };
+
         if (normalSizeRef.current) {
             normalSizeRef.current.addEventListener('click', handleNormalSize);
         }
@@ -128,13 +187,17 @@ const TextEditor = ({ children, id }: { children: React.ReactNode, id: string })
             smallSizeRef.current.addEventListener('click', handleSmallSize);
         }
 
+        
+
         return () => {
             document.removeEventListener('selectionchange', handleSelectionChange);
+            document.removeEventListener('keydown', handleKeyDown);
             anchorRef.current?.removeEventListener('click', AnchorClickHandler);
             normalSizeRef.current?.removeEventListener('click', handleNormalSize);
             largeSizeRef.current?.removeEventListener('click', handleLargeSize);
             hugeSizeRef.current?.removeEventListener('click', handleHugeSize);
             smallSizeRef.current?.removeEventListener('click', handleSmallSize);
+            
         };
     }, []);
 
@@ -148,7 +211,7 @@ const TextEditor = ({ children, id }: { children: React.ReactNode, id: string })
 
     return (
         <>
-            <div className={`toolbar absolute -top-10 ${isActive ? 'flex' : 'hidden'} bg-white w-[300px] z-20 justify-between`}>
+            <div className={`toolbar absolute -top-10 ${isActive ? 'flex' : 'hidden'} bg-white  z-20 justify-between`}>
                 <button ref={anchorRef} className={'p-4'}><FaLink /></button>
                 <button ref={boldRef} className={'p-4'}><FaBold /></button>
                 <button ref={italicRef} className={'p-4'}><FaItalic /></button>
@@ -164,10 +227,9 @@ const TextEditor = ({ children, id }: { children: React.ReactNode, id: string })
                 <button ref={largeSizeRef} className={'p-4'}>Large</button>
                 <button ref={hugeSizeRef} className={'p-4'}>Huge</button>
                 <button ref={smallSizeRef} className={'p-4'}>Small</button>
+                
             </div>
-            <div
-                ref={textRef}
-            >
+            <div ref={textRef} >
                 {children}
             </div>
         </>

@@ -86,6 +86,7 @@ const Panel = () => {
 
     return (
         <div className='w-[30%]' >
+            
             <div className="siderbar bg-slate-300 w-[100%] h-[100vh] flex flex-col justify-between overflow-auto">
 
                 <div className="tabs flex">
