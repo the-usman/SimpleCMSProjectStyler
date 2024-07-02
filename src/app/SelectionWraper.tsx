@@ -1,7 +1,6 @@
 import { AppContext } from '@/context';
 import React, { useRef, useState, useEffect, useContext } from 'react';
-import { FaBold, FaItalic, FaLink, FaPaintBrush, FaFillDrip, FaListOl, FaListUl } from 'react-icons/fa';
-import { Context } from './types';
+import { FaBold, FaItalic, FaLink, FaPaintBrush, FaFillDrip } from 'react-icons/fa';
 
 const TextEditor = ({ children, id }: { children: React.ReactNode, id: string }) => {
     const textRef = useRef<HTMLDivElement | null>(null);
@@ -100,12 +99,10 @@ const TextEditor = ({ children, id }: { children: React.ReactNode, id: string })
                     if (li && li.tagName === 'LI') {
                         const ul = li.parentElement;
                         if (ul) {
-                            // Create a new div to place the cursor
                             const newNode = document.createElement('div');
-                            newNode.innerHTML = '<br>'; // Add a break line to place the cursor.
+                            newNode.innerHTML = '<br>'; 
                             ul.insertAdjacentElement('afterend', newNode);
 
-                            // Move cursor to the new div
                             const newRange = document.createRange();
                             const sel = window.getSelection();
                             newRange.setStart(newNode, 0);
@@ -113,7 +110,6 @@ const TextEditor = ({ children, id }: { children: React.ReactNode, id: string })
                             sel?.removeAllRanges();
                             sel?.addRange(newRange);
 
-                            // Prevent further default list behavior
                             e.preventDefault();
                         }
                     }
@@ -186,7 +182,13 @@ const TextEditor = ({ children, id }: { children: React.ReactNode, id: string })
         if (smallSizeRef.current) {
             smallSizeRef.current.addEventListener('click', handleSmallSize);
         }
+        if (orderedListRef.current) {
+            orderedListRef.current.addEventListener('click', handleOrderedList);
+        }
 
+        if (unorderedListRef.current) {
+            unorderedListRef.current.addEventListener('click', handleUnorderedList);
+        }
         
 
         return () => {
