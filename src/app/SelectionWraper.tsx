@@ -11,8 +11,6 @@ const TextEditor = ({ children, id }: { children: React.ReactNode, id: string })
     const largeSizeRef = useRef<HTMLButtonElement | null>(null);
     const hugeSizeRef = useRef<HTMLButtonElement | null>(null);
     const smallSizeRef = useRef<HTMLButtonElement | null>(null);
-    const orderedListRef = useRef<HTMLButtonElement | null>(null);
-    const unorderedListRef = useRef<HTMLButtonElement | null>(null);
     const [isActive, setIsActive] = useState(false);
 
     const context = useContext(AppContext);
@@ -181,13 +179,6 @@ const TextEditor = ({ children, id }: { children: React.ReactNode, id: string })
 
         if (smallSizeRef.current) {
             smallSizeRef.current.addEventListener('click', handleSmallSize);
-        }
-        if (orderedListRef.current) {
-            orderedListRef.current.addEventListener('click', handleOrderedList);
-        }
-
-        if (unorderedListRef.current) {
-            unorderedListRef.current.addEventListener('click', handleUnorderedList);
         }
         
 
