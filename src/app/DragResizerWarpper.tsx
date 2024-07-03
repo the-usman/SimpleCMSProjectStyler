@@ -1,13 +1,10 @@
 import Image from 'next/image';
 import React, { useRef, useState, useEffect } from 'react';
 import TextEditor from './SelectionWraper';
+import { DragResizeProps } from './types';
 
-type Sizer = {
-    clientX: number,
-    clientY: number
-};
 
-const DraggableResizableComponent = ({ children, id, conRef, onClick }: { children: React.ReactNode, id: string, conRef?: any, onClick?: VoidFunction }) => {
+const DraggableResizableComponent = ({ children, id, conRef, onClick,  autoHeight = true }: DragResizeProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const topRef = useRef<HTMLDivElement>(null);
     const leftRef = useRef<HTMLDivElement>(null);
@@ -23,7 +20,6 @@ const DraggableResizableComponent = ({ children, id, conRef, onClick }: { childr
     const [isDragging, setIsDragging] = useState(false);
     const [isResizing, setIsResizing] = useState(false);
     const [dragLock, setDragLock] = useState(false);
-    const [pos, setPos] = useState<Sizer>({ clientX: 0, clientY: 0 });
     const [startX, setStartX] = useState(0);
     const [startY, setStartY] = useState(0);
     const [offsetX, setOffsetX] = useState(50);
@@ -358,7 +354,6 @@ const DraggableResizableComponent = ({ children, id, conRef, onClick }: { childr
 
         const container = conRef.current;
         if (!container) return;
-
         const handleMove = (event: MouseEvent | TouchEvent) => {
             if (isDragging) {
                 const movingDiv = ref.current;
@@ -372,23 +367,31 @@ const DraggableResizableComponent = ({ children, id, conRef, onClick }: { childr
                         clientX = event.touches[0].clientX;
                         clientY = event.touches[0].clientY;
                     }
-
+    
                     const x = clientX - startX;
                     const y = clientY - startY;
-
+    
                     const containerRect = container.getBoundingClientRect();
                     const elementRect = movingDiv.getBoundingClientRect();
-
+    
                     if (x >= 0 && x + elementRect.width <= containerRect.width) {
                         setOffsetX(x);
                     }
-
+    
                     if (y >= 0 && y + elementRect.height <= containerRect.height) {
                         setOffsetY(y);
                     }
+    
+                    const isNearBottom = containerRect.height - (y + elementRect.height) <= 200;
+                    const isNearRightEdge = x + elementRect.width >= containerRect.width;
+    
+                    if (isNearBottom && y >= 0 && !isNearRightEdge && autoHeight) {
+                        container.style.height = `${containerRect.height + 100}px`;
+                        console.log(`${containerRect.height + 100}px`);
+                    }
                 }
             }
-        };
+        };    
 
         const handleEnd = () => {
             setIsDragging(false);
@@ -425,7 +428,6 @@ const DraggableResizableComponent = ({ children, id, conRef, onClick }: { childr
                 if (childRef.current) {
                     childRef.current.addEventListener("click", (e) => {
                         onClick();
-
                     })
                 }
             }
@@ -455,7 +457,7 @@ const DraggableResizableComponent = ({ children, id, conRef, onClick }: { childr
             if (childRef.current) {
                 childRef.current.addEventListener("click", (e) => {
                     onClick();
-                    // e.stopPropagation();
+                    
                 })
             }
         }
@@ -467,6 +469,7 @@ const DraggableResizableComponent = ({ children, id, conRef, onClick }: { childr
             setDragLock(!dragLock);
         })
     })
+
 
     return (
         <div

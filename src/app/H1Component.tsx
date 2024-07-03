@@ -14,7 +14,6 @@ const H1Component: FC<H1props> = ({ canvasRef }) => {
     const onClick = (id: string) => {
         if (context?.setState) {
             context.setState(id);
-            console.log(`Context updated with ID: ${id}`);
         }
     }
 
@@ -28,6 +27,7 @@ const H1Component: FC<H1props> = ({ canvasRef }) => {
                         onClick={() => onClick(heading.id as string)}
                     >
                         <h1
+                        className=''
                             contentEditable={true}
                             suppressContentEditableWarning={true}
                             style={{
@@ -35,15 +35,8 @@ const H1Component: FC<H1props> = ({ canvasRef }) => {
                                 overflow: 'auto',
                                 width: "100%",
                                 height: "100%",
-                                opacity: 1,
                             }}
-                            onFocus={() => {
-                                const elem1 = document.getElementById(heading.id as string);
-                                if (elem1 && elem1.innerText === heading.text && getComputedStyle(elem1).opacity === "1") {
-                                    elem1.innerText = "";
-                                    elem1.style.opacity = "1";
-                                }
-                            }}
+                            
                         >
                             {heading.text}
                         </h1>

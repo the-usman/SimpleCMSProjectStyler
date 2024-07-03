@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useRef, useState, } from 'react';
-import { Elemento, element } from './types';
+import React, { useContext, useEffect, useState, } from 'react';
+import { Elemento } from './types';
 import { AppContext } from '@/context';
 import Icon from './Icon';
 import Styler from './Styler';
@@ -8,7 +8,7 @@ import Advance from './Advance';
 
 const Panel = () => {
     const context = useContext(AppContext);
-    
+
     if (!context) {
         throw new Error('AppContext must be used within an AppProvider');
     }
@@ -16,12 +16,7 @@ const Panel = () => {
         type: string;
         text?: string;
     }
-
-
-
-
-
-    const { setElements, elements, state, dragLock, setDragLock } = context;
+    const { setElements, elements, state } = context;
 
     const updateElements = ({ type, text }: Arg): void => {
         if (setElements && elements) {
@@ -77,16 +72,9 @@ const Panel = () => {
         });
 
     }, [activeTab]);
-
-    
-
-
-    
-
-
     return (
-        <div className='w-[30%]' >
-            
+        <div className='w-[30%] fixed' >
+
             <div className="siderbar bg-slate-300 w-[100%] h-[100vh] flex flex-col justify-between overflow-auto">
 
                 <div className="tabs flex">
@@ -97,19 +85,15 @@ const Panel = () => {
                         {tab}
                     </div>)
                     }
-
                 </div>
-
-                {/* <div className='text-center text-3xl font-bold my-20'>Welcome to {activeTab}</div> */}
                 <div className="icons flex justify-evenly items-center gap-2 p-2 flex-wrap" id='Components'>
                     <Icon text='Heading' src='/heading.png' onClick={() => handle('heading')} ></Icon>
                     <Icon text='text' src='/text.png' onClick={() => handle('text')} ></Icon>
                     <Icon text='Image' src='/image.png' onClick={() => handle('image')} ></Icon>
                     <Icon text='Videos' src='/video.png' onClick={() => handle('video')} ></Icon>
                 </div>
-                        {activeTab === 'Styling' && <Styler/>}
-                    
-                <Advance />
+                {activeTab === 'Styling' && <Styler />}
+                {activeTab === 'Advance' && <Advance />}
             </div>
         </div>
     )

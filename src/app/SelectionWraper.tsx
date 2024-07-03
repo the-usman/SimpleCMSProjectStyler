@@ -1,6 +1,6 @@
 import { AppContext } from '@/context';
 import React, { useRef, useState, useEffect, useContext } from 'react';
-import { FaBold, FaItalic, FaLink, FaPaintBrush, FaFillDrip } from 'react-icons/fa';
+import { FaBold, FaItalic, FaLink, FaPaintBrush, FaFillDrip, FaAddressCard } from 'react-icons/fa';
 
 const TextEditor = ({ children, id }: { children: React.ReactNode, id: string }) => {
     const textRef = useRef<HTMLDivElement | null>(null);
@@ -11,6 +11,7 @@ const TextEditor = ({ children, id }: { children: React.ReactNode, id: string })
     const largeSizeRef = useRef<HTMLButtonElement | null>(null);
     const hugeSizeRef = useRef<HTMLButtonElement | null>(null);
     const smallSizeRef = useRef<HTMLButtonElement | null>(null);
+    const classRef = useRef<HTMLButtonElement | null>(null);
     const [isActive, setIsActive] = useState(false);
 
     const context = useContext(AppContext);
@@ -20,13 +21,13 @@ const TextEditor = ({ children, id }: { children: React.ReactNode, id: string })
     }
     const { state } = context;
 
-    const wrapSelectedText = (tagName: string, options?: { link?: string, color?: string, bgColor?: string, fontSize?: string }) => {
+    const wrapSelectedText = (tagName: string, options?: { link?: string, color?: string, bgColor?: string, fontSize?: string, classes?: string }) => {
         const selection = window.getSelection();
         if (!selection?.rangeCount) return;
-
+    
         const range = selection.getRangeAt(0);
         const selectedText = range.toString();
-
+    
         if (selectedText) {
             const newNode = document.createElement(tagName);
             if (options?.link) {
@@ -48,12 +49,37 @@ const TextEditor = ({ children, id }: { children: React.ReactNode, id: string })
             if (options?.fontSize) {
                 newNode.style.fontSize = options.fontSize;
             }
+            if (options?.classes) {
+                const classes = options.classes.split(" ");
+                classes.forEach((className) => {
+                    newNode.classList.add(className);
+                });
+            }
             newNode.innerHTML = selectedText;
-
+    
+            
+            // Insert the new node
             range.deleteContents();
             range.insertNode(newNode);
+    
+            // Create a zero-width space text node
+            const spaceNode = document.createTextNode('\u200B');
+    
+            // Create a new range and set its start and end points after the new node
+            const newRange = document.createRange();
+            newRange.setStartAfter(newNode);
+            newRange.setEndAfter(newNode);
+    
+            // Insert the zero-width space
+            newRange.insertNode(spaceNode);
+    
+            // Collapse the selection to the end of the range (after the zero-width space)
+            selection.removeAllRanges();
+            selection.addRange(newRange);
+            newRange.collapse(false);
         }
     };
+    
 
     useEffect(() => {
         const handleSelectionChange = () => {
@@ -98,7 +124,7 @@ const TextEditor = ({ children, id }: { children: React.ReactNode, id: string })
                         const ul = li.parentElement;
                         if (ul) {
                             const newNode = document.createElement('div');
-                            newNode.innerHTML = '<br>'; 
+                            newNode.innerHTML = '<br>';
                             ul.insertAdjacentElement('afterend', newNode);
 
                             const newRange = document.createRange();
@@ -141,6 +167,14 @@ const TextEditor = ({ children, id }: { children: React.ReactNode, id: string })
             });
         }
 
+        const AddTailwindClasses = () => {
+            const classes = prompt('Enter the class name separated by commas if class is created by panel then add _u at the end of class');
+            console.log("classes", classes);
+            if (classes) {
+                wrapSelectedText('span', { classes: classes });
+            }
+        };
+
         const handleNormalSize = () => {
             wrapSelectedText('span', { fontSize: '16px' });
         };
@@ -155,14 +189,6 @@ const TextEditor = ({ children, id }: { children: React.ReactNode, id: string })
 
         const handleSmallSize = () => {
             wrapSelectedText('span', { fontSize: '12px' });
-        };
-
-        const handleOrderedList = () => {
-            wrapSelectedText('ol');
-        };
-
-        const handleUnorderedList = () => {
-            wrapSelectedText('ul');
         };
 
         if (normalSizeRef.current) {
@@ -180,7 +206,10 @@ const TextEditor = ({ children, id }: { children: React.ReactNode, id: string })
         if (smallSizeRef.current) {
             smallSizeRef.current.addEventListener('click', handleSmallSize);
         }
-        
+        if (classRef.current) {
+            classRef.current.addEventListener('click', AddTailwindClasses);
+        }
+
 
         return () => {
             document.removeEventListener('selectionchange', handleSelectionChange);
@@ -190,7 +219,8 @@ const TextEditor = ({ children, id }: { children: React.ReactNode, id: string })
             largeSizeRef.current?.removeEventListener('click', handleLargeSize);
             hugeSizeRef.current?.removeEventListener('click', handleHugeSize);
             smallSizeRef.current?.removeEventListener('click', handleSmallSize);
-            
+            classRef.current?.removeEventListener('click', AddTailwindClasses);
+
         };
     }, []);
 
@@ -220,7 +250,8 @@ const TextEditor = ({ children, id }: { children: React.ReactNode, id: string })
                 <button ref={largeSizeRef} className={'p-4'}>Large</button>
                 <button ref={hugeSizeRef} className={'p-4'}>Huge</button>
                 <button ref={smallSizeRef} className={'p-4'}>Small</button>
-                
+                <button ref={classRef} className={'p-4'}><FaAddressCard /></button>
+
             </div>
             <div ref={textRef} >
                 {children}

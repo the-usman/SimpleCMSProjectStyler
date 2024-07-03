@@ -12,6 +12,7 @@
     "@codemirror/lang-css": "^6.2.1",
     "@uiw/react-codemirror": "^4.22.2",
     "codemirror": "^6.0.1",
+    "gsap": "^3.12.5",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",

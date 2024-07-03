@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { RefObject } from 'react';
 
 export interface element {
     id?: string;
@@ -23,6 +23,27 @@ export interface Context {
     setImages?: (elements: { [key: string]: string } | ((prevImages: { [key: string]: string }) => { [key: string]: string })) => void;
     dragLock?: boolean;
     setDragLock?: (dragLock: boolean) => void;
+    videos?: { [key: string]: string };
+    setVideos?: (elements: { [key: string]: string } | ((prevImages: { [key: string]: string }) => { [key: string]: string })) => void;
 }
 
-// const AppContext = createContext<AppContextType | undefined>(undefined);
+
+
+export interface DragResizeProps {
+    children: React.ReactNode,
+    id: string;
+    conRef?: any;
+    onClick?: () => void;
+    autoHeight?: boolean;
+}
+
+
+export interface VideoCompoent {
+    canvasRef: RefObject<HTMLDivElement>;
+    uploadVideo: (file: File | null) => Promise<string>;
+}
+
+export interface IconType {
+
+}
+

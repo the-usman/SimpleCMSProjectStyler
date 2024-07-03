@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 
+
+
+
 .animation-element {
   /* Ensure animations don't persist on subsequent changes */
   animation: none;

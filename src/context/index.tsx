@@ -13,6 +13,7 @@ export const AppWrapper: React.FC<{ children: React.ReactNode }> = ({ children }
     const [isDragging, setIsDragging] = useState<boolean>(false);
     const [images, setImages] = useState<{ [key: string]: string }>({});
     const [dragLock, setDragLock] = useState(false);
+    const [videos, setVideos] = useState<{ [key: string]: string }>({});
 
     const value: Context = {
         state,
@@ -26,6 +27,8 @@ export const AppWrapper: React.FC<{ children: React.ReactNode }> = ({ children }
         setImages,
         dragLock,
         setDragLock,
+        videos,
+        setVideos,
     };
 
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
