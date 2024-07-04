@@ -4,6 +4,60 @@
 
 
 
+.resizer {
+  position: absolute;
+  background: #4285f4; /* Google blue */
+  z-index: 10;
+}
+
+.resizer-top,
+.resizer-bottom {
+  height: 5px;
+  left: 0;
+  right: 0;
+  cursor: ns-resize;
+}
+
+.resizer-left,
+.resizer-right {
+  width: 5px;
+  top: 0;
+  bottom: 0;
+  cursor: ew-resize;
+}
+
+.resizer-top-left,
+.resizer-top-right,
+.resizer-bottom-left,
+.resizer-bottom-right {
+  width: 10px;
+  height: 10px;
+  background: #4285f4;
+}
+
+.resizer-top-left {
+  cursor: nwse-resize;
+  top: -5px;
+  left: -5px;
+}
+
+.resizer-top-right {
+  cursor: nesw-resize;
+  top: -5px;
+  right: -5px;
+}
+
+.resizer-bottom-left {
+  cursor: nesw-resize;
+  bottom: -5px;
+  left: -5px;
+}
+
+.resizer-bottom-right {
+  cursor: nwse-resize;
+  bottom: -5px;
+  right: -5px;
+}
 
 
 .animation-element {

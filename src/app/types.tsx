@@ -38,12 +38,17 @@ export interface DragResizeProps {
 }
 
 
-export interface VideoCompoent {
-    canvasRef: RefObject<HTMLDivElement>;
-    uploadVideo: (file: File | null) => Promise<string>;
-}
+
 
 export interface IconType {
 
 }
 
+export interface DivideableBoxProps {
+    children: React.ReactNode
+    childRef: any;
+    id?: string;
+    content: React.ReactNode;
+    isApplicable: boolean;
+    divisionCount: number;
+}
