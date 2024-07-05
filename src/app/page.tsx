@@ -37,7 +37,7 @@ const Home: React.FC = () => {
   const ref = useRef<HTMLDivElement | null>(null);
 
   return (
-    <DivideableBox childRef={ref} content={<div><Image src={'/video.png'} alt="" width={80} height={0} /></div>} isApplicable={false} divisionCount={4}>
+    <DivideableBox childRef={ref} content={<div><Image src={'/video.png'} alt="" width={80} height={0} /></div>} isApplicable={false} divisionCount={3}>
       <div ref={ref} style={{ width: '400px', height: '400px', backgroundColor: 'lightgray' }}>
         
         

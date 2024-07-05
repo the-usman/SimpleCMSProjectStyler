@@ -50,5 +50,5 @@ export interface DivideableBoxProps {
     id?: string;
     content: React.ReactNode;
     isApplicable: boolean;
-    divisionCount: number;
+    divisionCount: number | number[][];
 }
