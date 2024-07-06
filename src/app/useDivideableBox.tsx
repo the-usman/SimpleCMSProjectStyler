@@ -1,13 +1,15 @@
-import { useEffect, useState, RefObject, ReactNode } from 'react';
+import { useEffect, useState, useRef, RefObject, ReactNode } from 'react';
 
-type UseDivideableBoxResult = [number[][], () => ReactNode[] | null];
+type Division = { row: number; col: number; content: ReactNode };
+type UseDivideableBoxResult = [Division[], () => ReactNode[] | null];
 
 export const useDivideableBox = (
     childRef: RefObject<HTMLDivElement>,
-    content: ReactNode,
+    contentState: ReactNode,
     divisionConfig: number | number[][]
 ): UseDivideableBoxResult => {
-    const [divisions, setDivisions] = useState<number[][]>([]);
+    const newContentRef = useRef(contentState); // Store the new content in a ref
+    const [divisions, setDivisions] = useState<Division[]>([]);
     const [previewDivision, setPreviewDivision] = useState<{ row: number, col: number } | null>(null);
 
     const isNumberConfig = (config: number | number[][]): config is number => {
@@ -51,6 +53,10 @@ export const useDivideableBox = (
     };
 
     useEffect(() => {
+        newContentRef.current = contentState; // Update the ref when contentState changes
+    }, [contentState]);
+
+    useEffect(() => {
         const mainElem = childRef.current;
         if (!mainElem) {
             throw new Error('A reference to the element which is to be divided is required');
@@ -84,8 +90,8 @@ export const useDivideableBox = (
             const { rowCount, colCount } = getRowColCount();
             const division = detectDivision(clientX, clientY, rowCount, colCount);
 
-            if (division !== null && !divisions.some(d => d[0] === division.row && d[1] === division.col)) {
-                setDivisions(prevDivisions => [...prevDivisions, [division.row, division.col]]);
+            if (division !== null && !divisions.some(d => d.row === division.row && d.col === division.col)) {
+                setDivisions(prevDivisions => [...prevDivisions, { ...division, content: newContentRef.current }]);
             }
             setPreviewDivision(null);
             mainElem.removeEventListener('mousemove', onMouseMove);
@@ -97,10 +103,10 @@ export const useDivideableBox = (
             window.addEventListener('mouseup', onMouseUp, { once: true });
         };
 
-        window.addEventListener('mousedown', onMouseDown);
+        mainElem.addEventListener('mousedown', onMouseDown);
 
         return () => {
-            window.removeEventListener('mousedown', onMouseDown);
+            mainElem.removeEventListener('mousedown', onMouseDown);
             mainElem.removeEventListener('mousemove', onMouseMove);
             window.removeEventListener('mouseup', onMouseUp);
         };
@@ -117,15 +123,13 @@ export const useDivideableBox = (
         const rowHeight = height / rowCount;
         const colWidth = width / colCount;
 
-        divisions.forEach(([row, col], index) => {
+        divisions.forEach(({ row, col, content }, index) => {
             const style: React.CSSProperties = {
                 top: `${row * rowHeight}px`,
                 left: `${col * colWidth}px`,
                 width: `${colWidth}px`,
                 height: `${rowHeight}px`,
                 position: 'absolute',
-                backgroundColor: 'rgba(255, 0, 0, 0.3)',
-                border: '1px solid black'
             };
 
             divisionElements.push(
@@ -135,7 +139,7 @@ export const useDivideableBox = (
             );
         });
 
-        if (previewDivision !== null && !divisions.some(d => d[0] === previewDivision.row && d[1] === previewDivision.col)) {
+        if (previewDivision !== null && !divisions.some(d => d.row === previewDivision.row && d.col === previewDivision.col)) {
             const style: React.CSSProperties = {
                 top: `${previewDivision.row * rowHeight}px`,
                 left: `${previewDivision.col * colWidth}px`,
@@ -148,7 +152,7 @@ export const useDivideableBox = (
 
             divisionElements.push(
                 <div key={divisions.length} style={style}>
-                    {content}
+                    {newContentRef.current}
                 </div>
             );
         }

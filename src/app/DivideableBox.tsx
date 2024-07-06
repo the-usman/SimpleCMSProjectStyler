@@ -5,7 +5,6 @@ import { DivideableBoxProps } from './types';
 const DivideableBox: React.FC<DivideableBoxProps> = ({ children, childRef, content, divisionCount }) => {
     const [divisions, renderContentInDivisions] = useDivideableBox(childRef, content, divisionCount);
 
-    
 
     return (
         <div  style={{ position: 'relative', width: '100%', height: '100%' }}>

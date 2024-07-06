@@ -29,19 +29,33 @@
 // }
 
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import DivideableBox from './DivideableBox';
 import Image from 'next/image';
 
 const Home: React.FC = () => {
   const ref = useRef<HTMLDivElement | null>(null);
+  const [content, setContent] = useState<React.ReactNode>(
+    <div>
+      <Image src={'/video.png'} alt="" width={80} height={80} />
+    </div>
+  );
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setContent(
+        <div>
+          dkdhskjhdsadjslakdjoisadnsaudoisadn jdoisadusa disuad oisadusa odisadus oaiddkjde kdjewd d iewd wi wid ewid ewid ewdiwed iewd ewid ewid ewid ewid ewid ewid diwd wid wid wid wid wid wid widw diw dwid wid wid wid wid wid wusao idusaoid saudoisadusoa idusaodoisadusa oidusaoid
+        </div>
+      );
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <DivideableBox childRef={ref} content={<div><Image src={'/video.png'} alt="" width={80} height={0} /></div>} isApplicable={false} divisionCount={3}>
-      <div ref={ref} style={{ width: '400px', height: '400px', backgroundColor: 'lightgray' }}>
-        
-        
-        </div>
+    <DivideableBox childRef={ref} content={content} isApplicable={false} divisionCount={3}>
+      <div ref={ref} style={{ width: '400px', height: '400px', backgroundColor: 'lightgray' }}></div>
     </DivideableBox>
   );
 };
