@@ -6,9 +6,11 @@ type UseDivideableBoxResult = [Division[], () => ReactNode[] | null];
 export const useDivideableBox = (
     childRef: RefObject<HTMLDivElement>,
     contentState: ReactNode,
-    divisionConfig: number | number[][]
+    divisionConfig: number | number[][],
+    isApplicable: boolean
 ): UseDivideableBoxResult => {
-    const newContentRef = useRef(contentState); // Store the new content in a ref
+    if (!isApplicable) return [[], () => null];
+    const newContentRef = useRef(contentState); 
     const [divisions, setDivisions] = useState<Division[]>([]);
     const [previewDivision, setPreviewDivision] = useState<{ row: number, col: number } | null>(null);
 
@@ -16,44 +18,22 @@ export const useDivideableBox = (
         return typeof config === 'number';
     };
 
-    const getRowColCount = (): { rowCount: number, colCount: number } => {
+    const getRowColWidths = (row: number): number[] => {
         if (isNumberConfig(divisionConfig)) {
             const count = divisionConfig;
-            const rowCount = Math.floor(Math.sqrt(count));
-            const colCount = Math.ceil(count / rowCount);
-            return { rowCount, colCount };
+            const rowCount = Math.ceil(Math.sqrt(count));
+            const colCount = row < count % rowCount ? Math.ceil(count / rowCount) : Math.floor(count / rowCount);
+            return new Array(colCount).fill(1 / colCount);
         } else {
-            const rowCount = divisionConfig.length;
-            const colCount = Math.max(...divisionConfig.map(row => row.length));
-            return { rowCount, colCount };
+            const rowConfig = divisionConfig[row];
+            if (!rowConfig) return [];
+            const total = rowConfig.reduce((sum, value) => sum + value, 0);
+            return rowConfig.map(value => value / total);
         }
-    };
-
-    const detectDivision = (clientX: number, clientY: number, rowCount: number, colCount: number): { row: number, col: number } | null => {
-        const mainElem = childRef.current;
-        if (!mainElem) return null;
-
-        const mainElemRect = mainElem.getBoundingClientRect();
-        const width = mainElemRect.width;
-        const height = mainElemRect.height;
-        const x = clientX - mainElemRect.left;
-        const y = clientY - mainElemRect.top;
-
-        if (x < 0 || y < 0 || x > width || y > height) {
-            return null;
-        }
-
-        const rowHeight = height / rowCount;
-        const colWidth = width / colCount;
-
-        const row = Math.floor(y / rowHeight);
-        const col = Math.floor(x / colWidth);
-
-        return { row, col };
     };
 
     useEffect(() => {
-        newContentRef.current = contentState; // Update the ref when contentState changes
+        newContentRef.current = contentState; 
     }, [contentState]);
 
     useEffect(() => {
@@ -61,6 +41,34 @@ export const useDivideableBox = (
         if (!mainElem) {
             throw new Error('A reference to the element which is to be divided is required');
         }
+
+        const detectDivision = (clientX: number, clientY: number): { row: number, col: number } | null => {
+            const mainElemRect = mainElem.getBoundingClientRect();
+            const width = mainElemRect.width;
+            const height = mainElemRect.height;
+            const x = clientX - mainElemRect.left;
+            const y = clientY - mainElemRect.top;
+
+            if (x < 0 || y < 0 || x > width || y > height) {
+                return null;
+            }
+
+            const rowCount = isNumberConfig(divisionConfig) ? Math.ceil(Math.sqrt(divisionConfig)) : divisionConfig.length;
+            const rowHeight = height / rowCount;
+
+            const row = Math.floor(y / rowHeight);
+            const colWidths = getRowColWidths(row);
+
+            let cumulativeWidth = 0;
+            for (let col = 0; col < colWidths.length; col++) {
+                cumulativeWidth += colWidths[col] * width;
+                if (x < cumulativeWidth) {
+                    return { row, col };
+                }
+            }
+
+            return null;
+        };
 
         const onMouseMove = (e: MouseEvent | TouchEvent) => {
             let clientX: number, clientY: number;
@@ -72,8 +80,7 @@ export const useDivideableBox = (
                 clientY = e.touches[0].clientY;
             }
 
-            const { rowCount, colCount } = getRowColCount();
-            const division = detectDivision(clientX, clientY, rowCount, colCount);
+            const division = detectDivision(clientX, clientY);
             setPreviewDivision(division);
         };
 
@@ -87,8 +94,7 @@ export const useDivideableBox = (
                 clientY = e.touches[0].clientY;
             }
 
-            const { rowCount, colCount } = getRowColCount();
-            const division = detectDivision(clientX, clientY, rowCount, colCount);
+            const division = detectDivision(clientX, clientY);
 
             if (division !== null && !divisions.some(d => d.row === division.row && d.col === division.col)) {
                 setDivisions(prevDivisions => [...prevDivisions, { ...division, content: newContentRef.current }]);
@@ -119,17 +125,20 @@ export const useDivideableBox = (
         const height = mainElemRect.height;
         const divisionElements: ReactNode[] = [];
 
-        const { rowCount, colCount } = getRowColCount();
+        const rowCount = isNumberConfig(divisionConfig) ? Math.ceil(Math.sqrt(divisionConfig)) : divisionConfig.length;
         const rowHeight = height / rowCount;
-        const colWidth = width / colCount;
 
         divisions.forEach(({ row, col, content }, index) => {
+            const colWidths = getRowColWidths(row);
+            const colWidth = colWidths[col] * width;
+            const left = colWidths.slice(0, col).reduce((acc, curr) => acc + curr * width, 0);
+
             const style: React.CSSProperties = {
                 top: `${row * rowHeight}px`,
-                left: `${col * colWidth}px`,
+                left: `${left}px`,
                 width: `${colWidth}px`,
                 height: `${rowHeight}px`,
-                position: 'absolute',
+                position: 'absolute'
             };
 
             divisionElements.push(
@@ -140,9 +149,13 @@ export const useDivideableBox = (
         });
 
         if (previewDivision !== null && !divisions.some(d => d.row === previewDivision.row && d.col === previewDivision.col)) {
+            const colWidths = getRowColWidths(previewDivision.row);
+            const colWidth = colWidths[previewDivision.col] * width;
+            const left = colWidths.slice(0, previewDivision.col).reduce((acc, curr) => acc + curr * width, 0);
+
             const style: React.CSSProperties = {
                 top: `${previewDivision.row * rowHeight}px`,
-                left: `${previewDivision.col * colWidth}px`,
+                left: `${left}px`,
                 width: `${colWidth}px`,
                 height: `${rowHeight}px`,
                 position: 'absolute',

@@ -52,3 +52,18 @@ export interface DivideableBoxProps {
     isApplicable: boolean;
     divisionCount: number | number[][];
 }
+
+export type Division =
+    {
+        row: number; col: number; content: React.ReactNode
+    };
+
+
+export type UseDivideableBoxResult =
+[number[], () => React.ReactNode[] | null];
+
+export interface useDivideableArg {
+    childRef: RefObject<HTMLDivElement>;
+    contentState: React.ReactNode;
+    divisionConfig: number | number[][];
+}

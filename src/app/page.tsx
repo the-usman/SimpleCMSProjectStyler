@@ -44,7 +44,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setContent(
-        <div>
+        <div style={{ overflow: "auto" }}>
           dkdhskjhdsadjslakdjoisadnsaudoisadn jdoisadusa disuad oisadusa odisadus oaiddkjde kdjewd d iewd wi wid ewid ewid ewdiwed iewd ewid ewid ewid ewid ewid ewid diwd wid wid wid wid wid wid widw diw dwid wid wid wid wid wid wusao idusaoid saudoisadusoa idusaodoisadusa oidusaoid
         </div>
       );
@@ -54,8 +54,8 @@ const Home: React.FC = () => {
   }, []);
 
   return (
-    <DivideableBox childRef={ref} content={content} isApplicable={false} divisionCount={3}>
-      <div ref={ref} style={{ width: '400px', height: '400px', backgroundColor: 'lightgray' }}></div>
+    <DivideableBox childRef={ref} content={content} isApplicable={true} divisionCount={[[32], [1, 3, 1]]}>
+      <div ref={ref} style={{ width: '100vw', height: '100vh', backgroundColor: 'lightgray' }}></div>
     </DivideableBox>
   );
 };
